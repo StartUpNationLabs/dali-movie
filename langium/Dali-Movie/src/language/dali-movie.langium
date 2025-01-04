@@ -1,47 +1,32 @@
-grammar DaliMovie
+grammar ArduinoMl
 
 entry Script:
-    commands+=Command*;
+    commands+=Command*
+;
 
 Command:
-    LoadCommand | PutCommand | AddSubtitleCommand | SaveCommand;
+    LoadVideo | LoadAudio | Cut
+;
+    
+LoadVideo:
+    'import' 'video' name=ID file=FILEPATH
+;
 
-LoadCommand:
-    'load' WS 'video' WS name=ID WS file=STRING (NEWLINE | WS)*;
+LoadAudio:
+    'import' 'audio' name=ID file=FILEPATH
+;
 
-PutCommand:
-    'put' WS
-    ( 
-        'title' WS title=STRING WS ('for' WS duration=Duration)? 'with' WS 'black' WS 'background' WS 'named' WS name=STRING
-    |
-        videoRef=[Command:ID] WS 'from' start=Time 'to' end=Time WS 'named' WS name=STRING
-    ) (NEWLINE | WS)*;
-
-AddSubtitleCommand:
-    'add' WS 'subtitle' WS text=STRING WS
-    (
-        'before' WS target=STRING WS 'for' WS duration=Duration WS |
-        'starting' WS offset=Offset WS 
-        ('after' WS ('end'|'start') WS target=STRING WS |
-         'before' WS ('start'|'end') WS target=STRING WS) 
-        'for' WS duration=Duration
-    );
-
-SaveCommand:
-    'save' WS 'the' WS 'output' WS 'here' WS file=STRING (NEWLINE | WS)*;
-
-Duration:
-    value=NUMBER WS 'seconds' (NEWLINE | WS)*;
+Cut:
+    'cut' originalVideo=[LoadVideo:ID] 'from' (from=('start' | 'end') | time=Time)
+;
 
 Time:
-    time=TIME;
+    duration=INT's'
+;
 
-Offset:
-    value=NUMBER WS 'seconds';
-
-terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
-terminal STRING: /"[^"]*"/;
-terminal NUMBER: /[0-9]+/;
-terminal TIME: /"[0-9][0-9]:[0-5][0-9]"/;
-terminal WS: /\s/;
-terminal NEWLINE: '\n' | '\r\n';
+hidden terminal WS: /\s+/;
+terminal ID: /[_a-zA-Z][\w_]*/;
+terminal FILEPATH: /(["'])(?:(?=(\\?))\2.)*?\1/;
+terminal INT: /[0-9]+/;
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
