@@ -9,7 +9,7 @@ export const setupConfigClassic = (): UserConfig => {
             editorAppConfig: {
                 $type: 'classic',
                 languageId: 'dali-movie',
-                code: `// Dali Movie is running in the web!`,
+                code: `// dali-movie is running in the web!`,
                 useDiffEditor: false,
                 languageExtensionConfig: { id: 'langium' },
                 languageDef: monarchSyntax,
