@@ -1,4 +1,4 @@
-grammar ArduinoMl
+grammar DaliMovie
 
 entry Script:
     commands+=Command*
@@ -7,7 +7,7 @@ entry Script:
 Command:
     LoadVideo | LoadAudio | Cut | AddMedia | AddText
 ;
-    
+
 LoadVideo:
     'import' 'video' name=ID file=QUOTED_STRING
 ;
