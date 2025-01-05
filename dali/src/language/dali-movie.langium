@@ -2,6 +2,7 @@ grammar DaliMovie
 
 entry Script:
     commands+=Command*
+    export+=Export?
 ;
 
 Command:
@@ -23,7 +24,7 @@ Cut:
 
 // Add a video a cut or an audio, the distinction is made in the logic
 AddMedia:
-    'add' mediaRef=[Media:ID] ((offset=TIME)? position=('before'|'after') referential=[Media:ID])?
+    'add' mediaRef=[Media:ID] ('from' (from=('start' | 'end') 'for'| from=TIME 'to') duration=TIME)? ((offset=TIME)? position=('before'|'after') referential=[Referentials:ID])?
 ;
 
 // Add a title or a subtitle
@@ -33,6 +34,14 @@ AddText:
 
 Media :
     LoadVideo | LoadAudio | Cut
+;
+
+Referentials :
+    LoadVideo | LoadAudio | Cut | AddText
+;
+
+Export :
+    'export' 'here' outputFilepath=QUOTED_STRING
 ;
 
 hidden terminal WS: /\s+/;
