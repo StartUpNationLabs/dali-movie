@@ -5,7 +5,7 @@ entry Script:
 ;
 
 Command:
-    LoadVideo | LoadAudio | Cut | AddMedia | AddText
+    LoadVideo | LoadAudio | CutVideo | CutAudio | AddMedia | AddTextToVideo
 ;
 
 LoadVideo:
@@ -16,8 +16,12 @@ LoadAudio:
     'import' 'audio' name=ID file=QUOTED_STRING
 ;
 
-Cut:
-    'cut' videoRef=[LoadVideo:ID] 'from' (from=('start' | 'end') 'for'| from=TIME 'to') duration=TIME 'named' name=ID
+CutVideo:
+    'cut' videoRef=[Video:ID] 'from' (from=('start' | 'end') 'for'| from=TIME 'to') duration=TIME 'named' name=ID
+;
+
+CutAudio:
+    'cut' videoRef=[Audio:ID] 'from' (from=('start' | 'end') 'for'| from=TIME 'to') duration=TIME 'named' name=ID
 ;
 
 // Add a video a cut or an audio, the distinction is made in the logic
@@ -26,16 +30,20 @@ AddMedia:
 ;
 
 // Add a title or a subtitle
-AddText:
+AddTextToVideo:
     type=('title' | 'subtitle')  content=QUOTED_STRING 'for' duration=TIME ((offset=TIME)? position=('before'|'after') referential=[Video:ID])? ('named' name=ID)?
 ;
 
 Video :
-    LoadVideo | Cut | AddText
+    LoadVideo | CutVideo | AddTextToVideo
+;
+
+Audio :
+    LoadAudio | CutAudio
 ;
 
 Media :
-    LoadVideo | LoadAudio | Cut
+    Video | Audio
 ;
 
 hidden terminal WS: /\s+/;
