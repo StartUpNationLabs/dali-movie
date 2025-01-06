@@ -49,10 +49,10 @@ AddText:
 ;
 
 StartingRule:
-    'starting' ((offset=TIME)? 'after' | 'at');
+    'starting' ((offset=TIME)? anchor='after' | anchor='at');
 
 EndingRule:
-    'ending' ((offset=TIME)? 'before' | 'at');
+    'ending' ((offset=TIME)? anchor='before' | anchor='at');
 
 Media :
     LoadVideo | LoadAudio | Cut | Text
