@@ -1,5 +1,11 @@
 from enum import Enum
 
-class Placement_Mode(Enum):
-    AFTER = "starting"
-    FROM = "from"
+class MODE(Enum):
+    START = "starting"
+    END = "ending"
+
+class ANCHOR_TYPE(Enum):
+    BEFORE = "before"
+    AFTER = "after"
+    AT = "at"
+

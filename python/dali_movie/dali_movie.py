@@ -57,17 +57,21 @@ class Dali_movie():
         return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(24)
 
     def subtitle(self, text, duration=5):
-        return TextClip(self._font_path, font_size=14,text=text, duration=duration)
+        return TextClip(self._font_path, font_size=14,text=text, duration=duration).with_fps(24)
 
     #ADD TO TIMELINE
-    def add(self, media, mode=None, offset=None, reference=None):
+    def add(self, media, mode=None, offset=None, anchor_type=None, reference=None):
         if not mode:
             return self._add_append(media)
-        if mode == Placement_Mode.AFTER and reference:
-            return self._add_after(media, offset, reference)
-        
-        if mode == Placement_Mode.FROM and reference:
-            return self._add_from(media, offset, reference)
+
+        if mode == MODE.START and anchor_type == ANCHOR_TYPE.AFTER and reference:
+            return self._add_starting_after(media, offset, reference)
+        if mode == MODE.END and anchor_type == ANCHOR_TYPE.BEFORE and reference:
+            return self._add_ending_before(media, offset, reference)
+        if mode == MODE.END and anchor_type == ANCHOR_TYPE.AT and reference:
+            return self._add_ending_at(media, offset, reference)
+        if mode == MODE.START and anchor_type == ANCHOR_TYPE.AT and reference:
+            return self._add_starting_at(media, offset, reference)
 
         return False
 
@@ -83,38 +87,86 @@ class Dali_movie():
             track.append(dali_clip)
         return True
 
-    def _add_after(self, media, offset, reference):
+    def _add_starting_after(self, media, offset, reference):
         #try:
         if offset == None: 
             offset = 0
         track = self._get_track(media)
-        anchor_time = self._get_reference_end(reference) + offset
+        anchor_time = self._get_reference(reference).end + offset
+        
+        if isinstance(media ,type(reference)) == False:
+            #MOVE TOGETHER
+            #print("Is a dependency")
+            self._get_reference(reference).add_dependency(media)
+
         index, previous_dali_clip, following_dali_clip = self._get_clip(track, anchor_time)
-        if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
-            print("NOT ENOUGH PLACE AFTER")
+        
+        if previous_dali_clip != None:
+            if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
+                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
+                overlap = anchor_time + media.duration - following_dali_clip.start
+                self._move_clips(track, following_dali_clip, overlap)
+
+        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+        #except Exception as e:
+        #    print( f"Exception : {e}")
+        #    return False
+
+    def _add_ending_before(self, media, offset, reference):
+        if offset == None: 
+            offset = 0
+        track = self._get_track(media)
+        anchor_time = self._get_reference(reference).start - offset - media.duration
+        
+        if isinstance(media ,type(reference)) == False:
+            #MOVE TOGETHER
+            self._get_reference(reference).add_dependency(media)
+        index, previous_dali_clip, following_dali_clip = self._get_clip(track, anchor_time)
+        if anchor_time < previous_dali_clip.end : anchor_time = previous_dali_clip.end
+
+        if previous_dali_clip != None:
+            if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
+                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
+                overlap = anchor_time + media.duration - following_dali_clip.start
+                self._move_clips(track, following_dali_clip, overlap + offset)
+
+        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+
+    def _add_ending_at(self, media, offset, reference):
+        return
+
+    def _add_starting_at(self, media, offset, reference):
+        if offset == None: 
+            offset = 0
+        track = self._get_track(media)
+        anchor_time = self._get_reference(reference).start + offset
+        
+        if isinstance(media ,type(reference)) == False:
+            #MOVE TOGETHER
+            self._get_reference(reference).add_dependency(media)
+        else:
             return False
-        if previous_dali_clip.end > anchor_time:
+        
+        index, previous_dali_clip, following_dali_clip = self._get_clip(track, anchor_time)
+
+        if previous_dali_clip != None:
+            if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
+                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
+                overlap = anchor_time + media.duration - following_dali_clip.start
+                self._move_clips(track, following_dali_clip, overlap + offset)
+
+        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+    
+    def _place_in_timeline(self, track, index, media, previous_dali_clip, anchor_time):
+        if previous_dali_clip != None and previous_dali_clip.end > anchor_time:
+            print(previous_dali_clip.end)
+            print(anchor_time)
             print("NOT ENOUGH PLACE BEFORE")
             return False
         
         #CLIP CAN BE PLACED
         added_dali_clip = Dali_clip(media, anchor_time)
         track.insert(index+1, added_dali_clip) 
-        #except Exception as e:
-        #    print( f"Exception : {e}")
-        #    return False
-    
-        
-        
-        
-    def _add_from(self, media, offset, reference):
-        if offset == None: 
-            offset = 0
-        if isinstance(media, type(reference)):
-            return False
-
-        track = self._get_track(media)
-
 
 
     def _get_track(self, media):
@@ -135,26 +187,44 @@ class Dali_movie():
     
     def _get_clip(self, track, anchor_time):
         try:
+            if len(track) == 0:
+                return -1, None, None
+            if(track[0].start >= anchor_time):
+                return -1, None, track[0]
             for i in range(len(track)):
-                if track[i+1].start > anchor_time:
+                if track[i+1].start >= anchor_time:
                     return i, track[i], track[i+1]
         except Exception as e:
             pass
         return len(track)-1, track[-1], None
 
-    def _get_reference_end(self, reference):
+    def _get_reference(self, reference):
         reference_track = self._get_track(reference)
         for i in range(len(reference_track)):
                 if isinstance(reference_track[i].media, type(reference)) and reference_track[i].media == reference:
-                    return reference_track[i].end
+                    return reference_track[i]
         return None
-
-    def _get_reference_start(self, reference):
-        reference_track = self._get_track(reference)
+    
+    def _move_clips(self, track, reference_dali_clip, offset):
+        move = False
         for i in range(len(track)):
-                if track[i].media == reference:
-                    return track[i].start
+                if isinstance(track[i], type(reference_dali_clip)) and track[i] == reference_dali_clip:
+                    move = True
+                if move == True:
+                    track[i].start = track[i].start + offset
+                    track[i].end = track[i].start + track[i].media.duration
+                    self._move_dependencies(track[i], offset)
+
         return None
+    
+    def _move_dependencies(self, dali_clip, offset):
+        for dependency in dali_clip.dependencies:
+            track = self._get_track(dependency)
+            dali_clip_on_track = next((clip for clip in track if clip.media == dependency), None)
+            if dali_clip_on_track != None:
+                dali_clip_on_track.start = dali_clip_on_track.start + offset
+                dali_clip_on_track.end = dali_clip_on_track.start + dali_clip_on_track.media.duration
+
 
     def __str__(self):
 
