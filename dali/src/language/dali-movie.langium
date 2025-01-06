@@ -36,17 +36,23 @@ Text:
 AddMedia:
     'add' mediaRef=[Media:ID] 
     ('from' (from=('start' | 'end') 'for'| from=TIME 'to') duration=TIME)? 
-    ('starting' ((offset=TIME)? 'after' | 'at') referential=[Referentials:ID] |
-     'ending'  ((offset=TIME)? 'before' | 'at') referential=[Referentials:ID] )?
+    (mode=StartingRule referential=[Referentials:ID] |
+     mode=EndingRule referential=[Referentials:ID] )?
 ;
 
 // Add a title or a subtitle
 AddText:
     'add' content=QUOTED_STRING 'for' duration=TIME
-    ('starting' ((offset=TIME)? 'after' | 'at') referential=[Referentials:ID] |
-     'ending'  ((offset=TIME)? 'before' | 'at') referential=[Referentials:ID] )?
+    (mode=StartingRule referential=[Referentials:ID] |
+     mode=EndingRule referential=[Referentials:ID] )?
     ('named' name=ID)?
 ;
+
+StartingRule:
+    'starting' ((offset=TIME)? 'after' | 'at');
+
+EndingRule:
+    'ending' ((offset=TIME)? 'before' | 'at');
 
 Media :
     LoadVideo | LoadAudio | Cut | Text
