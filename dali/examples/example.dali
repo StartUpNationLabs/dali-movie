@@ -1,0 +1,8 @@
+import video clip1 "./clip1.mp4"
+import audio introSound "intro_sound.mp3"
+
+cut clip1 from 23s to 1m47s named clip1a
+cut clip1 from start for 23s named clip1b
+cut clip1 from end for 23s named clip1c
+
+export here "./output.mp4"

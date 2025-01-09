@@ -1,10 +1,10 @@
-import type { Model } from '../language/generated/ast.js';
+import type { Script } from '../language/generated/ast.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { DaliMovieLanguageMetaData } from '../language/generated/module.js';
 import { createDaliMovieServices } from '../language/dali-movie-module.js';
 import { extractAstNode } from './cli-util.js';
-import { generateJavaScript } from './generator.js';
+import { generateMoviePython } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs/promises';
@@ -16,9 +16,9 @@ const packageContent = await fs.readFile(packagePath, 'utf-8');
 
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createDaliMovieServices(NodeFileSystem).DaliMovie;
-    const model = await extractAstNode<Model>(fileName, services);
-    const generatedFilePath = generateJavaScript(model, fileName, opts.destination);
-    console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
+    const model = await extractAstNode<Script>(fileName, services);
+    const generatedFilePath = generateMoviePython(model, fileName, opts.destination);
+    console.log(chalk.green(`Python code generated successfully: ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
@@ -35,7 +35,7 @@ export default function(): void {
         .command('generate')
         .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
         .option('-d, --destination <dir>', 'destination directory of generating')
-        .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
+        .description('generates Python code that prints the API functions in a source file')
         .action(generateAction);
 
     program.parse(process.argv);
