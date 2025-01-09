@@ -1,31 +1,112 @@
-import type { ValidationChecks } from "langium";
-import type { DaliMovieAstType } from "./generated/ast.js";
+import type { ValidationAcceptor, ValidationChecks } from "langium";
+import {
+  Cut,
+  type DaliMovieAstType,
+  type Script,
+  type Command,
+  type AddText,
+  AddMedia,
+} from "./generated/ast.js";
 import type { DaliMovieServices } from "./dali-movie-module.js";
 
 /**
  * Register custom validation checks.
  */
 export function registerValidationChecks(services: DaliMovieServices) {
-    const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.DaliMovieValidator;
-    const checks: ValidationChecks<DaliMovieAstType> = {
-        // Person: validator.checkPersonStartsWithCapital
-    };
-    registry.register(checks, validator);
+  const registry = services.validation.ValidationRegistry;
+  const validator = services.validation.DaliMovieValidator;
+  const checks: ValidationChecks<DaliMovieAstType> = {
+    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd],
+  };
+  registry.register(checks, validator);
 }
 
 /**
  * Implementation of custom validations.
  */
 export class DaliMovieValidator {
+  validateScriptUnicityOfIds(script: Script, accept: ValidationAcceptor): void {
+    const seenNames = new Map<string, Command>();
 
-    /*checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-        if (person.name) {
-            const firstChar = person.name.substring(0, 1);
-            if (firstChar.toUpperCase() !== firstChar) {
-                accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-            }
+    script.commands.forEach((command) => {
+      let name: string | undefined;
+      switch (command.$type) {
+        case "LoadAudio":
+        case "LoadVideo":
+        case "Cut":
+        case "Text":
+          name = (command as any).name;
+          break;
+        case "AddText":
+          if ((command as AddText).name) {
+            name = (command as AddText).name;
+          }
+          break;
+      }
+
+      if (name) {
+        if (seenNames.has(name)) {
+          accept("error", `The name '${name}' is already in use.`, {
+            node: command,
+            property: "name",
+          });
+        } else {
+          seenNames.set(name, command);
         }
-    }*/
+      }
+    });
+  }
 
+  validateStartBeforeEnd(script: Script, accept: ValidationAcceptor): void {
+    script.commands.forEach((command) => {
+      switch (command.$type) {
+        case "Cut":
+          let cut = command as Cut;
+          if (this.startAfterEnd(cut.from, cut.duration)) {
+            accept("error", "The end of the cut is before the start.", {
+              node: command,
+              property: "duration",
+            });
+          }
+          break;
+        case "AddMedia":
+          let addMedia = command as AddMedia;
+          if (this.startAfterEnd(addMedia.from, addMedia.duration)) {
+            accept(
+              "error",
+              "The end of the cut made in the media addition is before his own start.",
+              {
+                node: command,
+                property: "duration",
+              }
+            );
+          }
+          break;
+      }
+    });
+  }
+
+  private startAfterEnd(
+    from: string | undefined,
+    to: string | undefined
+  ): boolean {
+    if (!from || !to) return false;
+    
+    return this.timeToSecond(from) > this.timeToSecond(to);
+  }
+
+  private timeToSecond(time: string) : number {
+    let res = 0;
+
+    if (time.includes("m")) {
+        const index = time.indexOf("m")
+        res += parseInt(time.substring(0, index)) * 60;
+        res += parseInt(time.substring(index + 1, time.length-1));
+    }
+    else {
+        res += parseInt(time.substring(0, time.length-1));
+    }
+
+    return res;
+  }
 }
