@@ -16,7 +16,7 @@ export function registerValidationChecks(services: DaliMovieServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.DaliMovieValidator;
   const checks: ValidationChecks<DaliMovieAstType> = {
-    Script: validator.validateScriptUnicityOfIds,
+    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd],
   };
   registry.register(checks, validator);
 }
@@ -91,6 +91,22 @@ export class DaliMovieValidator {
     to: string | undefined
   ): boolean {
     if (!from || !to) return false;
-    return false;
+    
+    return this.timeToSecond(from) > this.timeToSecond(to);
+  }
+
+  private timeToSecond(time: string) : number {
+    let res = 0;
+
+    if (time.includes("m")) {
+        const index = time.indexOf("m")
+        res += parseInt(time.substring(0, index)) * 60;
+        res += parseInt(time.substring(index + 1, time.length-1));
+    }
+    else {
+        res += parseInt(time.substring(0, time.length-1));
+    }
+
+    return res;
   }
 }
