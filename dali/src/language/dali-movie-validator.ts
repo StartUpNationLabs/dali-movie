@@ -16,7 +16,7 @@ export function registerValidationChecks(services: DaliMovieServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.DaliMovieValidator;
   const checks: ValidationChecks<DaliMovieAstType> = {
-    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd, validator.validatorScriptPreventEmptyFilename],
+    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd, validator.validatorScriptPreventEmptyFilename, validator.validateAllTimeFormat, validator.validateIllegalIdReferences],
   };
   registry.register(checks, validator);
 }
@@ -51,6 +51,25 @@ export class DaliMovieValidator {
         }
       }
     });
+  }
+
+  validateIllegalIdReferences(script: Script, accept: ValidationAcceptor): void {
+    script.commands.forEach((command) => {
+      switch (command.$type) {
+        case "Cut":
+          let cut = command as Cut;
+          if (cut.mediaRef?.ref?.name === cut.name) {
+            accept(
+              "error",
+              "The name of the media addition cannot be the same as the name of the cut.",
+              {
+                node: command,
+                property: "name",
+              }
+            )
+          }
+      }
+    })
   }
 
   validateStartBeforeEnd(script: Script, accept: ValidationAcceptor): void {
@@ -125,6 +144,56 @@ export class DaliMovieValidator {
       }
   }
 
+  validateAllTimeFormat(script: Script, accept: ValidationAcceptor): void {
+    const validateTime = (time: string, command: any, errorMessage: string, property: string) => {
+      if (!["start", "end"].includes(time) && !this.validateTimeFormat(time)) {
+        accept(
+          "error",
+          errorMessage,
+          {
+            node: command,
+            property: property,
+          }
+        );
+      }
+    };
+
+    let commands : Command[] = [];
+
+    script.commands.forEach((command) => {
+      switch (command.$type) {
+        case "Cut":
+        case "AddMedia":
+          let from = (command as any).from;
+          if (from && from !== "") {
+            validateTime(from, command, "Invalid start time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "from");
+          }
+        case "AddText":
+          let duration = (command as any).duration;
+          if (duration && duration !== "") {
+            validateTime(duration, command, "Invalid end time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "duration");
+          }
+
+          if (command.$type !== "Cut") {
+            commands.push(command);
+          }
+      }
+    });
+
+    commands.forEach((command) => {
+      if (!(command as any).mode) {
+        return;
+      }
+
+      let mode = (command as any).mode;
+      let offset = (mode as any).offset;
+      if (!offset || offset === "") {
+        return;
+      }
+      validateTime(offset, mode, "Invalid offset time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "offset");
+    });
+  }
+
   private startAfterEnd(
     from: string | undefined,
     to: string | undefined
@@ -151,5 +220,25 @@ export class DaliMovieValidator {
     res += parseInt(time.substring(index, time.length-1));
 
     return res;
+  }
+
+  private validateTimeFormat(time: string): boolean {
+     if(!/^\d+((h\d+)?m\d+)?s$/.test(time)) {
+      return false;
+     }
+     let index = 0;
+
+     if (time.includes("h")) {
+        index = time.indexOf("h") + 1;
+     }
+
+     if (time.includes("m")) {
+        if (parseInt(time.substring(index, time.indexOf("m"))) > 59) {
+          return false;
+        }
+        index = time.indexOf("m") + 1;
+     }
+
+     return parseInt(time.substring(index, time.length-1)) <= 59;
   }
 }
