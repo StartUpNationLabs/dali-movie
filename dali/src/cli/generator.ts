@@ -1,7 +1,7 @@
 import { toString } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Command, Cut, LoadAudio, LoadVideo, Script } from "../language/generated/ast.js";
+import type { AddMedia, Command, Cut, LoadAudio, LoadVideo, Script } from "../language/generated/ast.js";
 import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(model: Script, filePath: string, destination: string | undefined): string {
@@ -20,7 +20,7 @@ dali_movie = Dali_movie(font_path)
 
     model.commands.forEach(command => code += generateCommand(command));
 
-    code += "\n" + daliFunction("export", file(model.export?.file));
+    code += "\n" + daliFunction("export", quoted(model.export?.file));
 
     if (!fs.existsSync(data.destination)) {
         fs.mkdirSync(data.destination, { recursive: true });
@@ -32,8 +32,7 @@ dali_movie = Dali_movie(font_path)
 function generateCommand(command: Command): string {
     switch (command.$type) {
         case "AddMedia":
-            throw new Error(`Unsupported command type: AddMedia`);
-        // return addMedia(command);
+            return addMedia(command);
         case "AddText":
             throw new Error(`Unsupported command type: AddText`);
         // return addText(command);
@@ -51,19 +50,45 @@ function generateCommand(command: Command): string {
     }
 }
 
-/*function addMedia(command: AddMedia): string {
-    const cutCode = command.from && command.duration ? cut({
-        $container: command.$container,
-        $type: "Cut",
-        duration: command.duration,
-        from: command.from,
-        mediaRef: command.mediaRef,
-        name: command.mediaRef.$refText
-    }) : '';
+function addMedia(command: AddMedia): string {
+    let variableName: string | undefined;
+    let cutCode = "";
+    if (command.from && command.duration) {
+        variableName = `${command.mediaRef.$refText}_${command.from}_${command.duration}`;
+        cutCode = cut({
+            $container: command.$container,
+            $type: "Cut",
+            duration: command.duration,
+            from: command.from,
+            mediaRef: command.mediaRef,
+            name: variableName
+        });
+    }
+    return cutCode + daliFunction("add", getParameters(command, variableName));
+}
 
-    const parameters = `${command.mediaRef.$refText}, mode=${command.mode}, offset=${command.offset}, reference=${command.referential?.$refText}`;
-    return cutCode + daliFunction("add", parameters);
-}*/
+function getParameters(command: AddMedia, variableName?: string): string {
+    let parameters = variableName ?? `${command.mediaRef.$refText}`;
+    if (command.mode) {
+        const mode = command.mode;
+        parameters += `, mode=${getMode(mode)}`;
+        parameters += `, anchor_type=${quoted(mode.anchor)}`;
+        if (mode.offset) parameters += `, offset=${getTime(mode.offset)}`;
+    }
+    if (command.referential) parameters += `, reference=${command.referential.$refText}`;
+    return parameters;
+}
+
+function getMode(mode: AddMedia["mode"]): string {
+    switch (mode?.$type) {
+        case "StartingRule":
+            return "MODE.START";
+        case "EndingRule":
+            return "MODE.END";
+        default:
+            return "None";
+    }
+}
 
 /*function addText(command: AddText): string {
     console.warn('addText is not implemented');
@@ -85,11 +110,11 @@ function cut(command: Cut): string {
 }
 
 function importAudio(command: LoadAudio): string {
-    return `${command.name} = ${daliFunction("importAudio", file(command.file))}`;
+    return `${command.name} = ${daliFunction("importAudio", quoted(command.file))}`;
 }
 
 function importVideo(command: LoadVideo): string {
-    return `${command.name} = ${daliFunction("importVideo", file(command.file))}`;
+    return `${command.name} = ${daliFunction("importVideo", quoted(command.file))}`;
 }
 
 /*function text(command: Text): string {
@@ -102,11 +127,11 @@ function daliFunction(functionName: string, parameters: string): string {
     return `dali_movie.${functionName}(${parameters})\n`;
 }
 
-function file(file?: string): string {
-    return file ? `"${file}"` : "";
+function quoted(text?: string): string {
+    return text ? `"${text}"` : "";
 }
 
-function getTime(time: string): string {
+function getTime(time: string): number {
     const split = time.slice(0, time.length - 1).split(/[hm]/);
-    return `(${split.join()})`;
+    return split.reduceRight((acc, val, index) => acc + ~~val * Math.pow(60, split.length - 1 - index), 0);
 }
