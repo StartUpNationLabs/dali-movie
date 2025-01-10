@@ -8,18 +8,19 @@ export function generateMoviePython(model: Script, filePath: string, destination
     const data = extractDestinationAndName(filePath, destination);
     const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
 
-    let code: string = `from dali_movie.dali_movie import Dali_movie
+    let code: string = `from dali_movie.dali_movie import Dali_movie, MODE, ANCHOR_TYPE
 from moviepy.audio.AudioClip import AudioClip
 
-FONT_PATH = "./dali_movie/resources/arial.TTF"
+#INIT
+font_path = "./dali_movie/resources/arial.TTF"
+dali_movie = Dali_movie(font_path)
 
-dali_movie = Dali_movie()
-
+#SCRIPT
 `;
 
     model.commands.forEach(command => code += generateCommand(command));
 
-    code += daliFunction("export", model.export?.outputFilepath ?? "");
+    code += "\n" + daliFunction("export", file(model.export?.file));
 
     if (!fs.existsSync(data.destination)) {
         fs.mkdirSync(data.destination, { recursive: true });
@@ -72,22 +73,23 @@ function generateCommand(command: Command): string {
 }*/
 
 function cut(command: Cut): string {
+    const start = command.name + " = ";
     switch (command.from) {
         case "start":
-            return daliFunction("cut_start", `${command.name}, ${command.duration}`);
+            return start + daliFunction("cut_start", `${command.mediaRef.$refText}, ${getTime(command.duration)}`);
         case "end":
-            return daliFunction("cut_end", `${command.name}, ${command.duration}`);
+            return start + daliFunction("cut_end", `${command.mediaRef.$refText}, ${getTime(command.duration)}`);
         default:
-            return daliFunction("cut", `${command.name}, ${command.from}, ${command.duration}`);
+            return start + daliFunction("cut", `${command.mediaRef.$refText}, ${getTime(command.from)}, ${getTime(command.duration)}`);
     }
 }
 
 function importAudio(command: LoadAudio): string {
-    return `${command.name} = ${daliFunction("importAudio", command.file)}`;
+    return `${command.name} = ${daliFunction("importAudio", file(command.file))}`;
 }
 
 function importVideo(command: LoadVideo): string {
-    return `${command.name} = ${daliFunction("importVideo", command.file)}`;
+    return `${command.name} = ${daliFunction("importVideo", file(command.file))}`;
 }
 
 /*function text(command: Text): string {
@@ -100,6 +102,11 @@ function daliFunction(functionName: string, parameters: string): string {
     return `dali_movie.${functionName}(${parameters})\n`;
 }
 
+function file(file?: string): string {
+    return file ? `"${file}"` : "";
+}
+
 function getTime(time: string): string {
-    const seconds = new Date(time).
+    const split = time.slice(0, time.length - 1).split(/[hm]/);
+    return `(${split.join()})`;
 }
