@@ -4,20 +4,16 @@ entry Script:
     commands+=Command*
     export=Export?
 ;
-
 Command:
-    LoadVideo | LoadAudio | Cut | Text | AddMedia | AddText
-;
-    
+    LoadVideo | LoadAudio | Cut | Text | AddMedia | AddText;
 LoadVideo:
-    'import' 'video' name=ID file=QUOTED_STRING
+    'import' 'video' name=ID QuotedFileName
 ;
 
 LoadAudio:
-    'import' 'audio' name=ID file=QUOTED_STRING
+    'import' 'audio' name=ID QuotedFileName
 ;
 
-// Can be a cut from an audio or from a video or from a cut in itself
 Cut:
     'cut' mediaRef=[Media:ID] 
     'from' (from=('start' | 'end') 'for'| from=TIME 'to') 
@@ -25,7 +21,7 @@ Cut:
 ;
 
 Text:
-    'text' content=QUOTED_STRING
+    'text' QuotedContent
     ('color' textColor=Color)?
     ('position' percentageFromLeft=Percentage ',' percentageFromTop=Percentage)?
     ('background' backgroundColor=Color)?
@@ -42,10 +38,14 @@ AddMedia:
 
 // Add a title or a subtitle
 AddText:
-    'add' content=QUOTED_STRING 'for' duration=TIME
+    'add' QuotedContent 'for' duration=TIME
     (mode=StartingRule referential=[Referentials:ID] |
      mode=EndingRule referential=[Referentials:ID] )?
     ('named' name=ID)?
+;
+
+Export:
+    'export' 'here' QuotedFileName
 ;
 
 StartingRule:
@@ -54,16 +54,12 @@ StartingRule:
 EndingRule:
     'ending' ((offset=TIME)? anchor='before' | anchor='at');
 
-Media :
+Media:
     LoadVideo | LoadAudio | Cut | Text
 ;
 
-Referentials :
+Referentials:
     LoadVideo | LoadAudio | Cut | AddText | Text
-;
-
-Export :
-    'export' 'here' outputFilepath=QUOTED_STRING
 ;
 
 Color returns string:
@@ -74,11 +70,25 @@ Percentage returns number:
     PERCENTAGE | '100'
 ;
 
-hidden terminal WS: /\s+/;
-terminal ID: /[_a-zA-Z][\w_]*/;
-terminal QUOTED_STRING: /(["'])(?:(?=(\\?))\2.)*?\1/;
-terminal TIME: /\d+(m\d+)?s/;
-terminal HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/;
-terminal PERCENTAGE: /([0-9]{1,2})/;
+fragment QuotedFileName:
+    '"' file=ID '"'
+;
+
+fragment QuotedContent:
+    content=FreeTextInBrackets
+;
+
+
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+
+hidden terminal WS: /\s+/;
+terminal TIME: /\d+((h\d+)?m\d+)?s/;
+
+terminal HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/;
+terminal PERCENTAGE: /([0-9]{1,2})/;
+terminal ID: /[a-zA-Z0-9\-_\\\/.]+/;
+terminal INT returns number: /[0-9]+/;
+terminal FreeTextInBrackets:
+  '[' -> ']'
+;

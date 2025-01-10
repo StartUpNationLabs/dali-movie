@@ -16,7 +16,7 @@ export function registerValidationChecks(services: DaliMovieServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.DaliMovieValidator;
   const checks: ValidationChecks<DaliMovieAstType> = {
-    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd],
+    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd, validator.validatorScriptPreventEmptyFilename],
   };
   registry.register(checks, validator);
 }
@@ -35,12 +35,8 @@ export class DaliMovieValidator {
         case "LoadVideo":
         case "Cut":
         case "Text":
-          name = (command as any).name;
-          break;
         case "AddText":
-          if ((command as AddText).name) {
-            name = (command as AddText).name;
-          }
+          name = (command as any).name;
           break;
       }
 
@@ -86,6 +82,49 @@ export class DaliMovieValidator {
     });
   }
 
+  validatorScriptPreventEmptyFilename(script: Script, accept: ValidationAcceptor): void {
+    const validateFilepath = (filepath: string, command: any, errorMessage: string) => {
+      if (!filepath || filepath === "") {
+        accept(
+          "error",
+          errorMessage,
+          {
+            node: command,
+            property: "file",
+          }
+        );
+      }
+    };
+
+    script.commands.forEach((command) => {
+      switch (command.$type) {
+        case "LoadAudio":
+        case "LoadVideo":
+          let filepath = (command as any).file;
+          validateFilepath(filepath, command, "The filepath of the file is empty. Please enter a filepath.");
+          break;
+        case "AddText":
+          case "Text":
+          let text = (command as AddText).content;
+          if (text === "") {
+            accept(
+              "error",
+              "The text to add is empty. Please enter a text.",
+              {
+                node: command,
+                property: "content",
+              }
+            );
+          }
+          break;
+        }
+      });
+
+      if (script.export) {
+        validateFilepath(script.export.file, script.export, "The filepath of the output file is empty. Please enter a valid output path.");
+      }
+  }
+
   private startAfterEnd(
     from: string | undefined,
     to: string | undefined
@@ -97,15 +136,19 @@ export class DaliMovieValidator {
 
   private timeToSecond(time: string) : number {
     let res = 0;
+    let index = 0;
+
+    if (time.includes("h")) {
+        res += parseInt(time.substring(0, time.indexOf("h"))) * 3600;
+        index=time.indexOf("h")+1
+    }
 
     if (time.includes("m")) {
-        const index = time.indexOf("m")
-        res += parseInt(time.substring(0, index)) * 60;
-        res += parseInt(time.substring(index + 1, time.length-1));
+      res += parseInt(time.substring(index, time.indexOf("m"))) * 60;
+      index=time.indexOf("m")+1
     }
-    else {
-        res += parseInt(time.substring(0, time.length-1));
-    }
+
+    res += parseInt(time.substring(index, time.length-1));
 
     return res;
   }
