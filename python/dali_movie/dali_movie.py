@@ -5,6 +5,7 @@ from moviepy.video.VideoClip import TextClip
 
 from .dali_clip import Dali_clip
 from .enum import *
+from .perf_profiler import Perf
 
 
 class Dali_movie():
@@ -51,13 +52,13 @@ class Dali_movie():
         return video.subclipped(video.duration-end_trim, video.duration)
 
     #TEXT
-    def title(self, text, backgroundColor="black", duration=5, textColor = "black"):
-        if backgroundColor == "black":
-            textColor = "white"
-        return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(24)
-
-    def subtitle(self, text, duration=5):
-        return TextClip(self._font_path, font_size=14,text=text, duration=duration).with_fps(24)
+    def text(self, text, duration=5, backgroundColor=None, textColor = "black"):
+        print(backgroundColor)
+        if backgroundColor != None:
+            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15)
+        
+        print("subtitle")
+        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20)
 
     #ADD TO TIMELINE
     def add(self, media, mode=None, offset=None, anchor_type=None, reference=None):
@@ -76,6 +77,7 @@ class Dali_movie():
         return False
 
     def _add_append(self, media):
+        start = Perf("add append")
         track = self._get_track(media)
         if track==None : return False
         
@@ -85,9 +87,11 @@ class Dali_movie():
             last_clip = track[-1]
             dali_clip = Dali_clip(media ,last_clip.end)
             track.append(dali_clip)
+        start.finish()
         return True
 
     def _add_starting_after(self, media, offset, reference):
+        start = Perf("add starting after")
         #try:
         if offset == None: 
             offset = 0
@@ -108,9 +112,7 @@ class Dali_movie():
                 self._move_clips(track, following_dali_clip, overlap)
 
         self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
-        #except Exception as e:
-        #    print( f"Exception : {e}")
-        #    return False
+        start.finish()
 
     def _add_ending_before(self, media, offset, reference):
         if offset == None: 
@@ -154,7 +156,7 @@ class Dali_movie():
                 #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
-
+        print("place media")
         self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
     
     def _place_in_timeline(self, track, index, media, previous_dali_clip, anchor_time):
@@ -170,17 +172,24 @@ class Dali_movie():
 
 
     def _get_track(self, media):
-        if isinstance(media, AudioClip):
-            return self._audio_track
-        elif isinstance(media, VideoClip):
-            return self._video_track
-        elif isinstance(media, TextClip):
-            if media.bg_color is None:
+
+        if isinstance(media, TextClip):
+            if media.fps > 15:
+                print("Is Subtitle")
+                print(media.fps)
                 # Subtitle
                 return self._subtitle_track
             else:
+                print("Is Title")
+                print(media.fps)
                 # Title
                 return self._video_track
+        elif isinstance(media, VideoClip):
+            print("Is Video")
+            return self._video_track
+        elif isinstance(media, AudioClip):
+            print("Is Audio")
+            return self._audio_track
         else:
             return False
         return True
