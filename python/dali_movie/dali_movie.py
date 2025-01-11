@@ -16,7 +16,7 @@ class Dali_movie():
         self._subtitle_track = []
 
     #EXPORT
-    def export(self):
+    def export(self, output_filename = "./output.mp4"):
         print(self._video_track)
         video_track = [clip.media for clip in self._video_track]
         audio_track = [clip.media for clip in self._audio_track]
@@ -32,7 +32,8 @@ class Dali_movie():
 
         if(len(final_track) > 1):
             final_track = CompositeVideoClip(final_track)
-        final_track[0].write_videofile("./output.mp4", fps=24)
+
+        final_track[0].write_videofile(output_filename, fps=24)
         
     #IMPORT
     def importVideo(self, filePath):
@@ -55,10 +56,10 @@ class Dali_movie():
     def text(self, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
         print(backgroundColor)
         if backgroundColor != None:
-            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position)
+            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position, relative=True)
         
         print("subtitle")
-        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position)
+        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position, relative=True)
 
     #ADD TO TIMELINE
     def add(self, media, mode=None, offset=None, anchor_type=None, reference=None):
