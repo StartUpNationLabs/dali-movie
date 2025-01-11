@@ -8,36 +8,74 @@ import type { AstNode, Reference, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const DaliMovieTerminals = {
-    WS: /\s+/,
-    ID: /[_a-zA-Z][\w_]*/,
-    QUOTED_STRING: /(["'])(?:(?=(\\?))\2.)*?\1/,
-    TIME: /\d+(m\d+)?s/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
+    WS: /\s+/,
+    TIME: /\d+((h\d+)?m\d+)?s/,
+    HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/,
+    PERCENTAGE: /([0-9]{1,2})/,
+    ID: /[a-zA-Z0-9\-_\\\/.]+/,
+    FreeTextInBrackets: /(\[([\s\S]*?\]))/,
 };
 
 export type DaliMovieTerminalNames = keyof typeof DaliMovieTerminals;
 
 export type DaliMovieKeywordNames = 
+    | "\""
+    | ","
+    | "100"
+    | "BEIGE"
+    | "BLACK"
+    | "BLUE"
+    | "BROWN"
+    | "CYAN"
+    | "GOLD"
+    | "GRAY"
+    | "GREEN"
+    | "INDIGO"
+    | "LIME"
+    | "MAGENTA"
+    | "ORANGE"
+    | "PINK"
+    | "PURPLE"
+    | "RED"
+    | "SILVER"
+    | "TEAL"
+    | "VIOLET"
+    | "WHITE"
+    | "YELLOW"
     | "add"
     | "after"
+    | "at"
     | "audio"
+    | "background"
     | "before"
+    | "color"
     | "cut"
     | "end"
+    | "ending"
+    | "export"
     | "for"
     | "from"
+    | "here"
     | "import"
     | "named"
+    | "position"
     | "start"
-    | "subtitle"
-    | "title"
+    | "starting"
+    | "text"
     | "to"
     | "video";
 
 export type DaliMovieTokenNames = DaliMovieTerminalNames | DaliMovieKeywordNames;
 
-export type Command = AddMedia | AddText | Cut | LoadAudio | LoadVideo;
+export type Color = 'BEIGE' | 'BLACK' | 'BLUE' | 'BROWN' | 'CYAN' | 'GOLD' | 'GRAY' | 'GREEN' | 'INDIGO' | 'LIME' | 'MAGENTA' | 'ORANGE' | 'PINK' | 'PURPLE' | 'RED' | 'SILVER' | 'TEAL' | 'VIOLET' | 'WHITE' | 'YELLOW' | string;
+
+export function isColor(item: unknown): item is Color {
+    return item === 'RED' || item === 'BLUE' || item === 'GREEN' || item === 'YELLOW' || item === 'ORANGE' || item === 'PURPLE' || item === 'PINK' || item === 'BLACK' || item === 'WHITE' || item === 'GRAY' || item === 'BROWN' || item === 'CYAN' || item === 'MAGENTA' || item === 'LIME' || item === 'TEAL' || item === 'INDIGO' || item === 'VIOLET' || item === 'GOLD' || item === 'SILVER' || item === 'BEIGE' || (typeof item === 'string' && (/#?([0-9a-f]{6}|[0-9a-f]{3})/.test(item)));
+}
+
+export type Command = AddMedia | AddText | Cut | LoadAudio | LoadVideo | Text;
 
 export const Command = 'Command';
 
@@ -45,7 +83,7 @@ export function isCommand(item: unknown): item is Command {
     return reflection.isInstance(item, Command);
 }
 
-export type Media = Cut | LoadAudio | LoadVideo;
+export type Media = Cut | LoadAudio | LoadVideo | Text;
 
 export const Media = 'Media';
 
@@ -53,21 +91,28 @@ export function isMedia(item: unknown): item is Media {
     return reflection.isInstance(item, Media);
 }
 
-export type Video = AddText | Cut | LoadVideo;
+export type Percentage = number;
 
-export const Video = 'Video';
+export function isPercentage(item: unknown): item is Percentage {
+    return typeof item === 'number';
+}
 
-export function isVideo(item: unknown): item is Video {
-    return reflection.isInstance(item, Video);
+export type Referentials = AddText | Cut | LoadAudio | LoadVideo | Text;
+
+export const Referentials = 'Referentials';
+
+export function isReferentials(item: unknown): item is Referentials {
+    return reflection.isInstance(item, Referentials);
 }
 
 export interface AddMedia extends AstNode {
     readonly $container: Script;
     readonly $type: 'AddMedia';
+    duration?: string;
+    from?: 'end' | 'start' | string;
     mediaRef: Reference<Media>;
-    offset?: string;
-    position?: 'after' | 'before';
-    referential?: Reference<Video>;
+    mode?: EndingRule | StartingRule;
+    referential?: Reference<Referentials>;
 }
 
 export const AddMedia = 'AddMedia';
@@ -81,11 +126,9 @@ export interface AddText extends AstNode {
     readonly $type: 'AddText';
     content: string;
     duration: string;
+    mode?: EndingRule | StartingRule;
     name?: string;
-    offset?: string;
-    position?: 'after' | 'before';
-    referential?: Reference<Video>;
-    type: 'subtitle' | 'title';
+    referential?: Reference<Referentials>;
 }
 
 export const AddText = 'AddText';
@@ -99,14 +142,39 @@ export interface Cut extends AstNode {
     readonly $type: 'Cut';
     duration: string;
     from: 'end' | 'start' | string;
+    mediaRef: Reference<Media>;
     name: string;
-    videoRef: Reference<LoadVideo>;
 }
 
 export const Cut = 'Cut';
 
 export function isCut(item: unknown): item is Cut {
     return reflection.isInstance(item, Cut);
+}
+
+export interface EndingRule extends AstNode {
+    readonly $container: AddMedia | AddText;
+    readonly $type: 'EndingRule';
+    anchor: 'at' | 'before';
+    offset?: string;
+}
+
+export const EndingRule = 'EndingRule';
+
+export function isEndingRule(item: unknown): item is EndingRule {
+    return reflection.isInstance(item, EndingRule);
+}
+
+export interface Export extends AstNode {
+    readonly $container: Script;
+    readonly $type: 'Export';
+    file: string;
+}
+
+export const Export = 'Export';
+
+export function isExport(item: unknown): item is Export {
+    return reflection.isInstance(item, Export);
 }
 
 export interface LoadAudio extends AstNode {
@@ -138,6 +206,7 @@ export function isLoadVideo(item: unknown): item is LoadVideo {
 export interface Script extends AstNode {
     readonly $type: 'Script';
     commands: Array<Command>;
+    export?: Export;
 }
 
 export const Script = 'Script';
@@ -146,22 +215,56 @@ export function isScript(item: unknown): item is Script {
     return reflection.isInstance(item, Script);
 }
 
+export interface StartingRule extends AstNode {
+    readonly $container: AddMedia | AddText;
+    readonly $type: 'StartingRule';
+    anchor: 'after' | 'at';
+    offset?: string;
+}
+
+export const StartingRule = 'StartingRule';
+
+export function isStartingRule(item: unknown): item is StartingRule {
+    return reflection.isInstance(item, StartingRule);
+}
+
+export interface Text extends AstNode {
+    readonly $container: Script;
+    readonly $type: 'Text';
+    backgroundColor?: Color;
+    content: string;
+    name: string;
+    percentageFromLeft?: Percentage;
+    percentageFromTop?: Percentage;
+    textColor?: Color;
+}
+
+export const Text = 'Text';
+
+export function isText(item: unknown): item is Text {
+    return reflection.isInstance(item, Text);
+}
+
 export type DaliMovieAstType = {
     AddMedia: AddMedia
     AddText: AddText
     Command: Command
     Cut: Cut
+    EndingRule: EndingRule
+    Export: Export
     LoadAudio: LoadAudio
     LoadVideo: LoadVideo
     Media: Media
+    Referentials: Referentials
     Script: Script
-    Video: Video
+    StartingRule: StartingRule
+    Text: Text
 }
 
 export class DaliMovieAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [AddMedia, AddText, Command, Cut, LoadAudio, LoadVideo, Media, Script, Video];
+        return [AddMedia, AddText, Command, Cut, EndingRule, Export, LoadAudio, LoadVideo, Media, Referentials, Script, StartingRule, Text];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -170,14 +273,13 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                 return this.isSubtype(Command, supertype);
             }
             case AddText: {
-                return this.isSubtype(Command, supertype) || this.isSubtype(Video, supertype);
+                return this.isSubtype(Command, supertype) || this.isSubtype(Referentials, supertype);
             }
             case Cut:
-            case LoadVideo: {
-                return this.isSubtype(Command, supertype) || this.isSubtype(Media, supertype) || this.isSubtype(Video, supertype);
-            }
-            case LoadAudio: {
-                return this.isSubtype(Command, supertype) || this.isSubtype(Media, supertype);
+            case LoadAudio:
+            case LoadVideo:
+            case Text: {
+                return this.isSubtype(Command, supertype) || this.isSubtype(Media, supertype) || this.isSubtype(Referentials, supertype);
             }
             default: {
                 return false;
@@ -188,15 +290,13 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'AddMedia:mediaRef': {
+            case 'AddMedia:mediaRef':
+            case 'Cut:mediaRef': {
                 return Media;
             }
             case 'AddMedia:referential':
             case 'AddText:referential': {
-                return Video;
-            }
-            case 'Cut:videoRef': {
-                return LoadVideo;
+                return Referentials;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -210,9 +310,10 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                 return {
                     name: AddMedia,
                     properties: [
+                        { name: 'duration' },
+                        { name: 'from' },
                         { name: 'mediaRef' },
-                        { name: 'offset' },
-                        { name: 'position' },
+                        { name: 'mode' },
                         { name: 'referential' }
                     ]
                 };
@@ -223,11 +324,9 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'content' },
                         { name: 'duration' },
+                        { name: 'mode' },
                         { name: 'name' },
-                        { name: 'offset' },
-                        { name: 'position' },
-                        { name: 'referential' },
-                        { name: 'type' }
+                        { name: 'referential' }
                     ]
                 };
             }
@@ -237,8 +336,25 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'duration' },
                         { name: 'from' },
-                        { name: 'name' },
-                        { name: 'videoRef' }
+                        { name: 'mediaRef' },
+                        { name: 'name' }
+                    ]
+                };
+            }
+            case EndingRule: {
+                return {
+                    name: EndingRule,
+                    properties: [
+                        { name: 'anchor' },
+                        { name: 'offset' }
+                    ]
+                };
+            }
+            case Export: {
+                return {
+                    name: Export,
+                    properties: [
+                        { name: 'file' }
                     ]
                 };
             }
@@ -264,7 +380,30 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                 return {
                     name: Script,
                     properties: [
-                        { name: 'commands', defaultValue: [] }
+                        { name: 'commands', defaultValue: [] },
+                        { name: 'export' }
+                    ]
+                };
+            }
+            case StartingRule: {
+                return {
+                    name: StartingRule,
+                    properties: [
+                        { name: 'anchor' },
+                        { name: 'offset' }
+                    ]
+                };
+            }
+            case Text: {
+                return {
+                    name: Text,
+                    properties: [
+                        { name: 'backgroundColor' },
+                        { name: 'content' },
+                        { name: 'name' },
+                        { name: 'percentageFromLeft' },
+                        { name: 'percentageFromTop' },
+                        { name: 'textColor' }
                     ]
                 };
             }
