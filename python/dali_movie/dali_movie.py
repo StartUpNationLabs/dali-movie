@@ -52,13 +52,13 @@ class Dali_movie():
         return video.subclipped(video.duration-end_trim, video.duration)
 
     #TEXT
-    def text(self, text, duration=5, backgroundColor=None, textColor = "black"):
+    def text(self, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
         print(backgroundColor)
         if backgroundColor != None:
-            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15)
+            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position)
         
         print("subtitle")
-        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20)
+        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position)
 
     #ADD TO TIMELINE
     def add(self, media, mode=None, offset=None, anchor_type=None, reference=None):
