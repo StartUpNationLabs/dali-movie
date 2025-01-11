@@ -12,7 +12,7 @@ export const setupConfigExtended = (): UserConfig => {
             editorAppConfig: {
                 $type: 'extended',
                 languageId: 'dali-movie',
-                code: `// Dali Movie is running in the web!`,
+                code: ``,
                 useDiffEditor: false,
                 extensions: [{
                     config: {
