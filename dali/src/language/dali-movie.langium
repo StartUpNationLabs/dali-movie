@@ -21,7 +21,7 @@ Cut:
 ;
 
 Text:
-    'text' QuotedContent
+    'text' QuotedContent 'for' duration=TIME
     ('color' textColor=Color)?
     ('position' percentageFromLeft=Percentage ',' percentageFromTop=Percentage)?
     ('background' backgroundColor=Color)?

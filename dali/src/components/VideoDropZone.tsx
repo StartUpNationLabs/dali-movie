@@ -107,7 +107,12 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
                     <Typography variant="body2" color="text.secondary">
                         Uploaded videos:
                     </Typography>
-                    <List>
+                    <List style={
+                        {
+                            maxHeight: "40vh",
+                            overflowY: "auto"
+                        }
+                    }>
                         {uploadedFiles.map((file, index) => (
                             <ListItem key={index}>
                                 <ListItemText primary={file.name}/>

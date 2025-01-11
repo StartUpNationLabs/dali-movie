@@ -1,12 +1,37 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import ReactApexChart from "react-apexcharts";
+import ApexCharts from "apexcharts"
 
 export const Timeline = (
-
     props: {
-        height: number;
+        height: string;
     }
 ) => {
+    const ref = useRef<any>(null);
+
+    useEffect(() => {
+        // set Timeout to wait for the chart to be rendered
+
+        const timeout = setTimeout(() => {
+
+            const chart = ref.current;
+            if (chart) {
+                ApexCharts.exec('chart', 'updateOptions', {
+                        plotOptions: {
+                            bar: {
+                                horizontal: true,
+                                barHeight: '80%'
+                            }
+                        }
+                    }
+                );
+            }
+        }
+            , 100);
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, []);
     const [state,] = useState({
 
         series: [
@@ -140,6 +165,7 @@ export const Timeline = (
         ],
         options: {
             chart: {
+                id: 'chart',
                 height: props.height,
                 type: 'rangeBar'
             },
@@ -175,12 +201,16 @@ export const Timeline = (
             }}
         >
             <div id="chart"
-                    style={{
-                        width: '100%',
-                        height: '100%'
-                    }}
+                 style={{
+                     width: '100%',
+                     height: '100%'
+                 }}
+                 ref={ref}
             >
-                <ReactApexChart options={state.options} series={state.series} type="rangeBar" height={'100%'}/>
+                <ReactApexChart
+
+
+                    options={state.options} series={state.series} type="rangeBar" height={'100%'}/>
             </div>
             <div id="html-dist"></div>
         </div>
