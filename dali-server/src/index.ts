@@ -159,7 +159,35 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
           error: errorOutput,
         });
       } else {
-        res.status(200).json({ success: true, output });
+        // Use a regular expression to extract the desired portion
+        const parts = output.split("-----");
+        let lastPart = parts[parts.length - 1].trim();
+        if (lastPart) {
+          res.status(200).json({
+            success: true,
+            timeline: JSON.parse(lastPart.replace(/'/g, '"')),
+            errors: [],
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            timeline: [
+              {
+                name: "Video",
+                data: [],
+              },
+              {
+                name: "Sound",
+                data: [],
+              },
+              {
+                name: "Subtitles",
+                data: [],
+              },
+            ],
+            errors: ["Failed to parse output"],
+          });
+        }
       }
     });
   } catch (error: any) {

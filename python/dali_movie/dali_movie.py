@@ -43,13 +43,13 @@ class Dali_movie():
                 final_track.append(concatenate_videoclips(subtitle_track, method="compose"))
 
             if(len(final_track) > 1):
-                final_track = CompositeVideoClip(final_track)
+                final_track[0] = CompositeVideoClip(final_track)
 
             final_track[0].write_videofile(output_filename, fps=24)
             return output_filename
         else:
             timeline = self.print_timeline(self._video_track, self._audio_track, self._subtitle_track)
-            print(timeline)
+            print("-----"+str(timeline))
 
     def print_timeline(self, videos, audios, subtitles):
         timeline = [
