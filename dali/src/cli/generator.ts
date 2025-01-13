@@ -143,8 +143,8 @@ function text(command: Text): string {
 
 function getTextParameters(command: Text): string {
     let parameters = `${quoted(command.name)}, ${getTextContent(command.content)}, duration=${getTime(command.duration)}`;
-    if (command.backgroundColor) parameters += `, backgroundColor=${command.backgroundColor}`;
-    if (command.textColor) parameters += `, textColor=${command.textColor}`;
+    if (command.backgroundColor) parameters += `, backgroundColor=${quoted(command.backgroundColor.toLowerCase())}`;
+    if (command.textColor) parameters += `, textColor=${quoted(command.textColor.toLowerCase())}`;
     if (command.percentageFromLeft && command.percentageFromTop)
         parameters += `, position=(${command.percentageFromLeft / 100}, ${command.percentageFromTop / 100})`;
     return parameters;
