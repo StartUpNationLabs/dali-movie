@@ -12,7 +12,6 @@ import type {
   Script,
   Text,
 } from "../generated/ast.js";
-import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(
   model: Script,
