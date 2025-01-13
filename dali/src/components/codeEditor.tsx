@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 import {MonacoEditorLanguageClientWrapper} from "monaco-editor-wrapper";
-import {setupConfigClassic} from "../setupClassic.ts";
-import {useCodeStore} from "./state.ts";
+import {setupConfigClassic} from "../setupClassic.js";
+import {useCodeStore} from "./state.js";
 
 const userConfig = setupConfigClassic();
 const wrapper = new MonacoEditorLanguageClientWrapper();
@@ -18,7 +18,6 @@ export const CodeEditor = () => {
                     wrapper.getEditor()?.onDidChangeModelContent(
                         (e) => {
                             setCode(wrapper.getEditor()?.getValue() || '');
-
                         }
                     )
                 }

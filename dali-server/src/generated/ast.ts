@@ -232,6 +232,7 @@ export interface Text extends AstNode {
     readonly $type: 'Text';
     backgroundColor?: Color;
     content: string;
+    duration: string;
     name: string;
     percentageFromLeft?: Percentage;
     percentageFromTop?: Percentage;
@@ -399,6 +400,7 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'backgroundColor' },
                         { name: 'content' },
+                        { name: 'duration' },
                         { name: 'name' },
                         { name: 'percentageFromLeft' },
                         { name: 'percentageFromTop' },

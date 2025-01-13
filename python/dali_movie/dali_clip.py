@@ -1,11 +1,12 @@
 
 
 class Dali_clip():
-    def __init__(self, media, start):
+    def __init__(self, name, media, start):
         self.media = media
         self.start = start
         self.end   = start + media.duration  
         self.dependencies = []
+        self.name = name
 
     def add_dependency(self, reference):
         self.dependencies.append(reference)

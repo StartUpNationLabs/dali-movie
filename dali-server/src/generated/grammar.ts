@@ -350,6 +350,22 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             }
           },
           {
+            "$type": "Keyword",
+            "value": "for"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "duration",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@20"
+              },
+              "arguments": []
+            }
+          },
+          {
             "$type": "Group",
             "elements": [
               {
