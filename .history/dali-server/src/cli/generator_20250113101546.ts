@@ -24,8 +24,7 @@ from moviepy.audio.AudioClip import AudioClip
 #INIT
 font_path = "./dali_movie/resources/arial.TTF"
 dali_movie = Dali_movie(font_path)
-#SCRIPT
-`;
+#SCRIPT`;
 
   model.commands.forEach((command) => (code += generateCommand(command)));
 
