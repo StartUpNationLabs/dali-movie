@@ -17,11 +17,11 @@ export const Timeline = (
     useQuery(['timeline'], async () => {
             const api = new DefaultApi(
                 new Configuration({
-                    basePath: 'http://localhost:8080'
+                    basePath: 'http://localhost:5000'
                 })
             );
             return  (await api.sessionIdTimelinePost(sessionId, {
-                languim: code,
+                langium: code,
             })).data;
         }, {
             refetchInterval: 1000,
