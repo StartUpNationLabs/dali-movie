@@ -321,14 +321,15 @@ class Dali_movie():
                 space = track[i].start - previous_media.end
             else:
                 space = track[i].start
+
             if space > 0.1:
                 dali_clip = None
                 if isinstance(track[i].media, TextClip):
-                    dali_clip = Dali_clip("blank", ColorClip((1080,720), color=(0, 0, 0, 0), duration=space), previous_media.end)
+                    dali_clip = Dali_clip("blank", ColorClip((1280,720), color=(0, 0, 0, 0), duration=space), 0)
                 if isinstance(track[i].media, AudioClip):
-                    dali_clip = Dali_clip("blank", AudioClip(lambda t: [0] * 2, duration=space, fps=44100), previous_media.end)
+                    dali_clip = Dali_clip("blank", AudioClip(lambda t: [0] * 2, duration=space, fps=44100), 0)
                 if isinstance(track[i].media, VideoClip):
-                    dali_clip = Dali_clip("blank", ColorClip((1080,720) ,duration=space), previous_media.end)
+                    dali_clip = Dali_clip("blank", ColorClip((1280,720) ,duration=space), 0)
                 else:
                     print("Wrong type : " + str(type(track[i])))
                 result.append(dali_clip)    
