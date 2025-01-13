@@ -8,20 +8,19 @@ import type { AstNode, Reference, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const DaliMovieTerminals = {
-    ML_COMMENT: /\/\*[\s\S]*?\*\//,
-    SL_COMMENT: /\/\/[^\n\r]*/,
     WS: /\s+/,
-    TIME: /\d+((h\d+)?m\d+)?s/,
+    ID: /[_a-zA-Z][\w_]*/,
+    QUOTED_STRING: /(["'])(?:(?=(\\?))\2.)*?\1/,
+    TIME: /\d+(m\d+)?s/,
     HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/,
     PERCENTAGE: /([0-9]{1,2})/,
-    ID: /[a-zA-Z0-9\-_\\\/.]+/,
-    FreeTextInBrackets: /(\[([\s\S]*?\]))/,
+    ML_COMMENT: /\/\*[\s\S]*?\*\//,
+    SL_COMMENT: /\/\/[^\n\r]*/,
 };
 
 export type DaliMovieTerminalNames = keyof typeof DaliMovieTerminals;
 
 export type DaliMovieKeywordNames = 
-    | "\""
     | ","
     | "100"
     | "BEIGE"
@@ -168,7 +167,7 @@ export function isEndingRule(item: unknown): item is EndingRule {
 export interface Export extends AstNode {
     readonly $container: Script;
     readonly $type: 'Export';
-    file: string;
+    outputFilepath: string;
 }
 
 export const Export = 'Export';
@@ -354,7 +353,7 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                 return {
                     name: Export,
                     properties: [
-                        { name: 'file' }
+                        { name: 'outputFilepath' }
                     ]
                 };
             }
