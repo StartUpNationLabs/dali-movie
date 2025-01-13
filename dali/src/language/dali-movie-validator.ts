@@ -153,7 +153,7 @@ export class DaliMovieValidator {
 
     if (script.export) {
       validateFilepath(
-        script.export.outputFilepath,
+        script.export.file,
         script.export,
         "The filepath of the output file is empty. Please enter a valid output path."
       );
