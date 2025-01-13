@@ -71,18 +71,13 @@ function addMedia(command: AddMedia): string {
       duration: command.duration,
       from: command.from,
       mediaRef: command.mediaRef,
-      name: variableName,
+      name: variableName
     });
   }
-  return (
-    cutCode + daliFunction("add", getAddMediaParameters(command, variableName))
-  );
+  return cutCode + daliFunction("add", getAddMediaParameters(command, variableName));
 }
 
-function getAddMediaParameters(
-  command: AddMedia,
-  variableName?: string
-): string {
+function getAddMediaParameters(command: AddMedia, variableName?: string): string {
   let parameters = variableName ?? `${command.mediaRef.$refText}`;
   if (command.mode) {
     const mode = command.mode;
@@ -90,8 +85,7 @@ function getAddMediaParameters(
     parameters += `, anchor_type=${quoted(mode.anchor)}`;
     if (mode.offset) parameters += `, offset=${getTime(mode.offset)}`;
   }
-  if (command.referential)
-    parameters += `, reference=${command.referential.$refText}`;
+  if (command.referential) parameters += `, reference=${command.referential.$refText}`;
   return parameters;
 }
 
@@ -107,58 +101,49 @@ function getAddMediaMode(mode: AddMedia["mode"]): string {
 }
 
 function addText(command: AddText): string {
-  let variableName = command.name ?? getVariableName();
+  let variableName = command.name ?? getTextVariableName();
   const textCommand: Text = {
     $container: command.$container,
     $type: "Text",
     content: command.content,
     duration: command.duration,
-    name: variableName,
+    name: variableName
   };
   let textCode = text(textCommand);
-  return (
-    textCode +
-    addMedia({
-      $container: command.$container,
-      $type: "AddMedia",
-      mediaRef: { ref: textCommand, $refText: variableName },
-      mode: command.mode,
-      referential: command.referential,
-    })
-  );
+  return textCode + addMedia({
+    $container: command.$container,
+    $type: "AddMedia",
+    mediaRef: { ref: textCommand, $refText: variableName },
+    mode: command.mode,
+    referential: command.referential
+  });
 }
 
 function cut(command: Cut): string {
   const start = command.name + " = ";
   switch (command.from) {
     case "start": {
-      const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(
-        command.duration
-      )}`;
+      const params = `${quoted(command.name)}, ${command.mediaRef.$refText}, ${getTime(command.duration)}`;
       return start + daliFunction("cut_start", params);
     }
     case "end": {
-      const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(
-        command.duration
-      )}`;
+      const params = `${quoted(command.name)}, ${command.mediaRef.$refText}, ${getTime(command.duration)}`;
       return start + daliFunction("cut_end", params);
     }
     default: {
-      const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(
-        command.from
-      )}, ${getTime(command.duration)}`;
+      const params = `${quoted(command.name)}, ${command.mediaRef.$refText}, ${getTime(command.from)}, ${getTime(command.duration)}`;
       return start + daliFunction("cut", params);
     }
   }
 }
 
 function importAudio(command: LoadAudio): string {
-  const params = `${command.name}, ${quoted(command.file)}`;
+  const params = `${quoted(command.name)}, ${quoted(command.file)}`;
   return `${command.name} = ${daliFunction("importAudio", params)}`;
 }
 
 function importVideo(command: LoadVideo): string {
-  const params = `${command.name}, ${quoted(command.file)}`;
+  const params = `${quoted(command.name)}, ${quoted(command.file)}`;
   return `${command.name} = ${daliFunction("importVideo", params)}`;
 }
 
@@ -168,29 +153,24 @@ function text(command: Text): string {
 }
 
 function getTextParameters(command: Text): string {
-  let parameters = `${command.name}, ${getTextContent(
-    command.content
-  )}, duration=${getTime(command.duration)}`;
-  if (command.backgroundColor)
-    parameters += `, backgroundColor=${command.backgroundColor}`;
+  let parameters = `${quoted(command.name)}, ${getTextContent(command.content)}, duration=${getTime(command.duration)}`;
+  if (command.backgroundColor) parameters += `, backgroundColor=${command.backgroundColor}`;
   if (command.textColor) parameters += `, textColor=${command.textColor}`;
   if (command.percentageFromLeft && command.percentageFromTop)
-    parameters += `, position=(${command.percentageFromLeft / 100}, ${
-      command.percentageFromTop / 100
-    })`;
+    parameters += `, position=(${command.percentageFromLeft / 100}, ${command.percentageFromTop / 100})`;
   return parameters;
 }
 
 function getTextContent(content: string): string {
-  return quoted(content.slice(1, content.length - 1).replaceAll(/"/g, '\\"')); // ["texte"] -> "\"texte\""
+  return quoted(content.slice(1, content.length - 1).replaceAll(/"/g, "\\\"")); // ["texte"] -> "\"texte\""
 }
 
 function daliFunction(functionName: string, parameters: string): string {
   return `dali_movie.${functionName}(${parameters})\n`;
 }
 
-function getVariableName(): string {
-  return `var_${uuidv4().replaceAll("-", "_")}`;
+function getTextVariableName(): string {
+  return `text_${uuidv4().replaceAll("-", "_")}`;
 }
 
 function quoted(text?: string): string {
@@ -199,8 +179,5 @@ function quoted(text?: string): string {
 
 function getTime(time: string): number {
   const split = time.slice(0, time.length - 1).split(/[hm]/);
-  return split.reduceRight(
-    (acc, val, index) => acc + ~~val * Math.pow(60, split.length - 1 - index),
-    0
-  );
+  return split.reduceRight((acc, val, index) => acc + ~~val * Math.pow(60, split.length - 1 - index), 0);
 }
