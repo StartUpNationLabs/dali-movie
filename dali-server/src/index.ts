@@ -159,7 +159,15 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
           error: errorOutput,
         });
       } else {
-        res.status(200).json({ success: true, output });
+        // Use a regular expression to extract the desired portion
+        const match = output.match(/-----\[(.*?)\]\r\n/);
+
+        if (match) {
+          res.status(200).json({
+            success: true,
+            data: JSON.parse(match[1].replace(/'/g, '"')),
+          });
+        }
       }
     });
   } catch (error: any) {
