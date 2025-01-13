@@ -1,3 +1,6 @@
+import sys
+import os
+
 from moviepy import (VideoFileClip, AudioFileClip, VideoClip, CompositeVideoClip, concatenate_videoclips, concatenate_audioclips )
 from moviepy.audio.AudioClip import AudioClip
 from moviepy.video.VideoClip import VideoClip
@@ -10,6 +13,8 @@ from .perf_profiler import Perf
 
 class Dali_movie():
     def __init__(self, font_path):
+        #EXPORT_MODE = sys.argv[1]
+
         self._font_path = font_path
         self._video_track = []
         self._audio_track = []
@@ -17,81 +22,123 @@ class Dali_movie():
 
     #EXPORT
     def export(self, output_filename = "./output.mp4"):
-        print(self._video_track)
-        video_track = [clip.media for clip in self._video_track]
-        audio_track = [clip.media for clip in self._audio_track]
-        subtitle_track = [clip.media for clip in self._subtitle_track]
 
-        final_track = [concatenate_videoclips(video_track, method="compose")]
-        if(len(audio_track) > 0):
-            final_audio = concatenate_audioclips(audio_track)
-            final_track[0] = final_track[0].with_audio(final_audio)
+        if EXPORT_MODE == "export":
+            print(self._video_track)
+            video_track = [clip.media for clip in self._video_track]
+            audio_track = [clip.media for clip in self._audio_track]
+            subtitle_track = [clip.media for clip in self._subtitle_track]
 
-        if(len(subtitle_track) > 0):
-            final_track.append(concatenate_videoclips(subtitle_track, method="compose"))
+            final_track = [concatenate_videoclips(video_track, method="compose")]
+            if(len(audio_track) > 0):
+                final_audio = concatenate_audioclips(audio_track)
+                final_track[0] = final_track[0].with_audio(final_audio)
 
-        if(len(final_track) > 1):
-            final_track = CompositeVideoClip(final_track)
+            if(len(subtitle_track) > 0):
+                final_track.append(concatenate_videoclips(subtitle_track, method="compose"))
 
-        final_track[0].write_videofile(output_filename, fps=24)
+            if(len(final_track) > 1):
+                final_track = CompositeVideoClip(final_track)
+
+            final_track[0].write_videofile(output_filename, fps=24)
+        else:
+            timeline = print_timeline(self._video_track, self.audio_track, self._subtitle_track)
+            print(timeline)
+
+    def print_timeline(videos, audios, texts):
+        timeline = [
+            {
+                name: 'Video',
+                data: []
+            },
+            {
+                name: 'Sound',
+                data: []
+            },
+            {
+                name: 'Subtitles',
+                data: []
+            }
+        ]
+
         
     #IMPORT
-    def importVideo(self, filePath):
-        return VideoFileClip(filePath) 
+    def importVideo(self, name, filePath):
+        try:    
+            video = VideoFileClip(filePath)
+            return Dali_clip(name, video, 0)
+        except Exception as e:
+            filePath = os.path.abspath(filePath)
+            video = VideoFileClip(filePath)
+            return Dali_clip(name, video, 0)
 
-    def importAudio(self, filePath):
-        return AudioFileClip(filePath) 
+    def importAudio(self, name, filePath):
+        try: 
+            audio = AudioFileClip(filePath) 
+            return Dali_clip(name, audio, 0)
+        except Exception as e:
+            filePath = os.path.abspath(filePath)
+            audio = AudioFileClip(filePath) 
+            return Dali_clip(name, audio, 0)
     
     #CUT
-    def cut(self, video, start, end):
-        return video.subclipped(start, end)
+    def cut(self, name, video, start, end):
+        media = video.media
+        video = media.subclipped(start, end)
+        return Dali_clip(name, video, 0)
 
-    def cut_start(self, video, start_trim):
-        return video.subclipped(0, start_trim)
+    def cut_start(self, name, video, start_trim):
+        media = video.media
+        video = media.subclipped(0, start_trim)
+        return Dali_clip(name, video, 0)
 
-    def cut_end(self, video, end_trim):
-        return video.subclipped(video.duration-end_trim, video.duration)
+    def cut_end(self, name, video, end_trim):
+        media = video.media
+        video = media.subclipped(media.duration-end_trim, media.duration)
+        return Dali_clip(name, video, 0)
 
     #TEXT
-    def text(self, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
+    def text(self, name, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
         print(backgroundColor)
         if backgroundColor != None:
-            return TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position, relative=True)
+            text = TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position, relative=True)
+            return Dali_clip(name, text, 0)
         
         print("subtitle")
-        return TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position, relative=True)
+        text = TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position, relative=True)
+        return Dali_clip(name, text, 0)
 
     #ADD TO TIMELINE
-    def add(self, media, mode=None, offset=None, anchor_type=None, reference=None):
+    def add(self, dali_clip, mode=None, offset=None, anchor_type=None, reference=None):
         if not mode:
-            return self._add_append(media)
+            return self._add_append(dali_clip.name, dali_clip.media)
 
         if mode == MODE.START and anchor_type == ANCHOR_TYPE.AFTER and reference:
-            return self._add_starting_after(media, offset, reference)
+            return self._add_starting_after(dali_clip.name, dali_clip.media, offset, reference.media)
         if mode == MODE.END and anchor_type == ANCHOR_TYPE.BEFORE and reference:
-            return self._add_ending_before(media, offset, reference)
+            return self._add_ending_before(dali_clip.name, dali_clip.media, offset, reference.media)
         if mode == MODE.END and anchor_type == ANCHOR_TYPE.AT and reference:
-            return self._add_ending_at(media, offset, reference)
+            return self._add_ending_at(dali_clip.name, dali_clip.media, offset, reference.media)
         if mode == MODE.START and anchor_type == ANCHOR_TYPE.AT and reference:
-            return self._add_starting_at(media, offset, reference)
+            return self._add_starting_at(dali_clip.name, dali_clip.media, offset, reference.media)
 
         return False
 
-    def _add_append(self, media):
+    def _add_append(self, name, media):
         start = Perf("add append")
         track = self._get_track(media)
         if track==None : return False
         
         if(len(track)) == 0:
-            track.append(Dali_clip(media ,0))
+            track.append(Dali_clip(name, media ,0))
         else:
             last_clip = track[-1]
-            dali_clip = Dali_clip(media ,last_clip.end)
+            dali_clip = Dali_clip(name, media ,last_clip.end)
             track.append(dali_clip)
         start.finish()
         return True
 
-    def _add_starting_after(self, media, offset, reference):
+    def _add_starting_after(self, name, media, offset, reference):
         start = Perf("add starting after")
         #try:
         if offset == None: 
@@ -112,10 +159,10 @@ class Dali_movie():
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap)
 
-        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
         start.finish()
 
-    def _add_ending_before(self, media, offset, reference):
+    def _add_ending_before(self, name, media, offset, reference):
         if offset == None: 
             offset = 0
         track = self._get_track(media)
@@ -133,12 +180,12 @@ class Dali_movie():
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
 
-        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
 
-    def _add_ending_at(self, media, offset, reference):
+    def _add_ending_at(self, name, media, offset, reference):
         return
 
-    def _add_starting_at(self, media, offset, reference):
+    def _add_starting_at(self, name, media, offset, reference):
         if offset == None: 
             offset = 0
         track = self._get_track(media)
@@ -158,9 +205,9 @@ class Dali_movie():
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
         print("place media")
-        self._place_in_timeline(track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
     
-    def _place_in_timeline(self, track, index, media, previous_dali_clip, anchor_time):
+    def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time):
         if previous_dali_clip != None and previous_dali_clip.end > anchor_time:
             print(previous_dali_clip.end)
             print(anchor_time)
@@ -168,7 +215,7 @@ class Dali_movie():
             return False
         
         #CLIP CAN BE PLACED
-        added_dali_clip = Dali_clip(media, anchor_time)
+        added_dali_clip = Dali_clip(name, media, anchor_time)
         track.insert(index+1, added_dali_clip) 
 
 
