@@ -143,14 +143,13 @@ class Dali_movie():
     def add(self, dali_clip, mode=None, offset=None, anchor_type=None, reference=None):
         if not mode:
             return self._add_append(dali_clip.name, dali_clip.media)
-
-        if mode == MODE.START and anchor_type == ANCHOR_TYPE.AFTER and reference:
+        if mode == MODE.START and anchor_type == "after" and reference:
             return self._add_starting_after(dali_clip.name, dali_clip.media, offset, reference.media)
-        if mode == MODE.END and anchor_type == ANCHOR_TYPE.BEFORE and reference:
+        if mode == MODE.END and anchor_type == "before" and reference:
             return self._add_ending_before(dali_clip.name, dali_clip.media, offset, reference.media)
-        if mode == MODE.END and anchor_type == ANCHOR_TYPE.AT and reference:
+        if mode == MODE.END and anchor_type == "at" and reference:
             return self._add_ending_at(dali_clip.name, dali_clip.media, offset, reference.media)
-        if mode == MODE.START and anchor_type == ANCHOR_TYPE.AT and reference:
+        if mode == MODE.START and anchor_type == "at" and reference:
             return self._add_starting_at(dali_clip.name, dali_clip.media, offset, reference.media)
         return False
 
@@ -188,7 +187,6 @@ class Dali_movie():
                 #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap)
-
         self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
         start.finish()
 
