@@ -10,6 +10,8 @@ import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
 import { generateMoviePython } from "./cli/generator.js";
 
+import { exec } from 'child_process';
+
 const app = express();
 const PORT = 5000;
 
@@ -119,10 +121,22 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const model = document.parseResult.value;
 
     console.log("Code : ", model);
-    const python = generateMoviePython(model, "./" + sessionId, "response.py");
-    console.log(python);
+    const python = generateMoviePython(model, "./exemple.dali", "./result.py");
+    
+    const command = `python3 ${python}`;
+    exec(command, (error: Error | null, stdout: string, stderr: string) => {
+      if (error) {
+          console.error(`Error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.error(`Standard Error: ${stderr}`);
+          return;
+      }
+      res.status(200).json(stdout);
+    });
 
-    res.status(200).json("AST generated");
+    console.log("AST generated");
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -159,4 +173,29 @@ function updateFilePath(
   if (exportValue) {
     exportValue.file = prefix + exportValue.file;
   }
+}
+
+function cli(){
+  const services = createDaliMovieServices(EmptyFileSystem);
+  const parse = parseHelper<Script>(services.DaliMovie);
+
+  const daliCode = ;
+  console.log("Code : ", daliCode);
+  const document = await parse(daliCode);
+
+  const model = document.parseResult.value;
+  const python = generateMoviePython(model, "./exemple.dali", "./result.py");
+  
+  const command = `python3 ${python}`;
+  exec(command, (error: Error | null, stdout: string, stderr: string) => {
+    if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.error(`Standard Error: ${stderr}`);
+        return;
+    }
+    console.log(stdout);
+  });
 }
