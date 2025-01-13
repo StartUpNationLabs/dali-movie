@@ -1,18 +1,48 @@
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {CodeEditor} from "./codeEditor.tsx";
+import {CodeEditor} from "./codeEditor.jsx";
 import {Box, Button, IconButton, Typography} from "@mui/material";
-import VideoDropzone from "./VideoDropZone.tsx";
-import {Timeline} from "./Timeline.tsx";
+import VideoDropzone from "./VideoDropZone.jsx";
+import {Timeline} from "./Timeline.jsx";
 import {useState} from "react";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import {useMutation} from "react-query";
+import {Configuration, DefaultApi, SessionIdTimelinePostRequest} from "../openapi";
+import {useCodeStore, useSessionStore} from "./state.js";
 
-function handleGenerateVideo() {
-
-
-}
 
 export const App = () => {
+
     const [isTimelineVisible, setIsTimelineVisible] = useState(true);
+    const code = useCodeStore((state) => state.code);
+    const sessionId = useSessionStore((state) => state.session);
+    const mutation = useMutation(
+        async (
+            data: SessionIdTimelinePostRequest
+        ) => {
+            const api = new DefaultApi(
+                new Configuration({
+                    basePath: 'http://localhost:8080'
+                })
+            );
+            return (await api.sessionIdGeneratePost(sessionId, {
+                languim: code,
+            })).data;
+
+        }
+        , {
+            onSuccess: (data) => {
+                // Invalidate and refetch
+                if (data.errors && data.errors.length > 0) {
+                    console.error(data.errors)
+                } else {
+                    alert("Video generated successfully" + data.video)
+                }
+            },
+        })
+
+    function handleGenerateVideo() {
+        mutation.mutate({languim: code});
+    }
 
     return (
         <>
