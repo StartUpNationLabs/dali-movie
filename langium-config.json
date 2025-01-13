@@ -1,0 +1,15 @@
+{
+    "projectName": "DaliMovie",
+    "languages": [{
+        "id": "dali-movie",
+        "grammar": "libs/language/src/dali-movie.langium",
+        "fileExtensions": [".dali"],
+        "textMate": {
+            "out": "syntaxes/dali-movie.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "libs/language/src/syntaxes/dali-movie.monarch.ts"
+        }
+    }],
+    "out": "libs/language/src/generated"
+}

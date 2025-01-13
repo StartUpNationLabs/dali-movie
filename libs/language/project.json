@@ -1,0 +1,29 @@
+{
+  "name": "language",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/language/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/language",
+        "main": "libs/language/src/index.ts",
+        "tsConfig": "libs/language/tsconfig.lib.json",
+        "assets": [
+          "libs/language/*.md"
+        ]
+      }
+    },
+    "build-language": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx langium generate --file langium-config.json"
+      }
+    }
+  }
+}

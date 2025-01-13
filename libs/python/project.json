@@ -1,0 +1,19 @@
+{
+  "name": "python",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/python/dali_movie",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/dali_movie",
+        "command": "npx copyfiles -u 1 libs/python/dali_movie/* dist/libs"
+      }
+    }
+  }
+}
