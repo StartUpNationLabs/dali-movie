@@ -38,7 +38,7 @@ class Dali_movie():
                 final_track.append(concatenate_videoclips(subtitle_track, method="compose"))
 
             if(len(final_track) > 1):
-                final_track = CompositeVideoClip(final_track)
+                final_track[0] = CompositeVideoClip(final_track)
 
             final_track[0].write_videofile(output_filename, fps=24)
             return output_filename
