@@ -1,6 +1,7 @@
 import { toString } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { v4 as uuidv4 } from "uuid";
 import type { AddMedia, AddText, Command, Cut, LoadAudio, LoadVideo, Script, Text } from "../language/generated/ast.js";
 import { extractDestinationAndName } from "./cli-util.js";
 
@@ -89,7 +90,7 @@ function getAddMediaMode(mode: AddMedia["mode"]): string {
 }
 
 function addText(command: AddText): string {
-    let variableName = command.name ?? `${contentToVariableCase(command.content)}_${command.duration}`;
+    let variableName = command.name ?? getVariableName();
     const textCommand: Text = {
         $container: command.$container,
         $type: "Text",
@@ -149,8 +150,8 @@ function daliFunction(functionName: string, parameters: string): string {
     return `dali_movie.${functionName}(${parameters})\n`;
 }
 
-function contentToVariableCase(content: string): string {
-    return content.replaceAll(" ", "_").replaceAll(/\W/g, "");
+function getVariableName(): string {
+    return `var_${uuidv4().replaceAll("-", "_")}`;
 }
 
 function quoted(text?: string): string {
