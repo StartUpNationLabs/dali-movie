@@ -10,7 +10,6 @@ import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
 import { generateMoviePython } from "./cli/generator.js";
 
-import { exec } from 'child_process';
 
 const app = express();
 const PORT = 5000;
@@ -105,10 +104,11 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const sessionId = req.params.sessionId;
     if (!sessionId) {
       res
-        .status(400)
-        .json({ success: false, message: "Session ID is required" });
+          .status(400)
+          .json({ success: false, message: "Session ID is required" });
       return;
     }
+
     const services = createDaliMovieServices(EmptyFileSystem);
     const parse = parseHelper<Script>(services.DaliMovie);
 
@@ -121,22 +121,41 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const model = document.parseResult.value;
 
     console.log("Code : ", model);
-    const python = generateMoviePython(model, "./exemple.dali", "./result.py");
-    
-    const command = `python3 ${python}`;
-    exec(command, (error: Error | null, stdout: string, stderr: string) => {
-      if (error) {
-          console.error(`Error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.error(`Standard Error: ${stderr}`);
-          return;
-      }
-      res.status(200).json(stdout);
+    const pythonScriptPath = generateMoviePython(model, "./exemple.dali", "./result.py");
+
+    const command = `${process.env.PYTHON_PATH || "python"} ${pythonScriptPath}`;
+    const subprocess = require("child_process").spawn(command, [], {
+      shell: true,
+      env: {
+        ...process.env, // Conservez les variables d'environnement existantes
+        PYTHONUNBUFFERED: "1", // Pour éviter les problèmes de buffering
+        PYTHONPATH: (process.env["PYTHON_PATH"] || "") + path.join(__dirname, "../../python/"), // Ajoutez le chemin du script Python
+      },
+    });
+    let output = "";
+    let errorOutput = "";
+
+    subprocess.stdout.on("data", (data: Buffer) => {
+      output += data.toString();
     });
 
-    console.log("AST generated");
+    subprocess.stderr.on("data", (data: Buffer) => {
+      errorOutput += data.toString();
+    });
+
+    subprocess.on("close", (code: number) => {
+      if (code !== 0) {
+        console.error(`Subprocess exited with code ${code}`);
+        res.status(500).json({
+          success: false,
+          message: "Error executing Python script",
+          error: errorOutput,
+        });
+      } else {
+        res.status(200).json({ success: true, output });
+      }
+    });
+
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -175,27 +194,27 @@ function updateFilePath(
   }
 }
 
-function cli(){
-  const services = createDaliMovieServices(EmptyFileSystem);
-  const parse = parseHelper<Script>(services.DaliMovie);
-
-  const daliCode = ;
-  console.log("Code : ", daliCode);
-  const document = await parse(daliCode);
-
-  const model = document.parseResult.value;
-  const python = generateMoviePython(model, "./exemple.dali", "./result.py");
-  
-  const command = `python3 ${python}`;
-  exec(command, (error: Error | null, stdout: string, stderr: string) => {
-    if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.error(`Standard Error: ${stderr}`);
-        return;
-    }
-    console.log(stdout);
-  });
-}
+// function cli(){
+//   const services = createDaliMovieServices(EmptyFileSystem);
+//   const parse = parseHelper<Script>(services.DaliMovie);
+//
+//   const daliCode = "";
+//   console.log("Code : ", daliCode);
+//   const document = await parse(daliCode);
+//
+//   const model = document.parseResult.value;
+//   const python = generateMoviePython(model, "./exemple.dali", "./result.py");
+//
+//   const command = `python3 ${python}`;
+//   exec(command, (error: Error | null, stdout: string, stderr: string) => {
+//     if (error) {
+//         console.error(`Error: ${error.message}`);
+//         return;
+//     }
+//     if (stderr) {
+//         console.error(`Standard Error: ${stderr}`);
+//         return;
+//     }
+//     console.log(stdout);
+//   });
+// }
