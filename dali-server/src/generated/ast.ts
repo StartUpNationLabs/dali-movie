@@ -10,11 +10,11 @@ import { AbstractAstReflection } from 'langium';
 export const DaliMovieTerminals = {
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
-    WS: /\s+/,
     TIME: /\d+((h\d+)?m\d+)?s/,
+    ID: /[a-zA-Z0-9\-_\\\/.]+/,
+    WS: /\s+/,
     HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/,
     PERCENTAGE: /([0-9]{1,2})/,
-    ID: /[a-zA-Z0-9\-_\\\/.]+/,
     FreeTextInBrackets: /(\[([\s\S]*?\]))/,
 };
 

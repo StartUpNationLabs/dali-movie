@@ -10,7 +10,6 @@ import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
 import { generateMoviePython } from "./cli/generator.js";
 
-
 const app = express();
 const PORT = 5000;
 
@@ -104,8 +103,8 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const sessionId = req.params.sessionId;
     if (!sessionId) {
       res
-          .status(400)
-          .json({ success: false, message: "Session ID is required" });
+        .status(400)
+        .json({ success: false, message: "Session ID is required" });
       return;
     }
 
@@ -117,19 +116,27 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     console.log("Code : ", daliCode);
 
     const document = await parse(daliCode);
-    updateFilePath(document, sessionId + "/");
+    updateFilePath(document, "out/uploads/" + sessionId + "/");
     const model = document.parseResult.value;
 
     console.log("Code : ", model);
-    const pythonScriptPath = generateMoviePython(model, "./exemple.dali", "./result.py");
+    const pythonScriptPath = generateMoviePython(
+      model,
+      "out/python/" + sessionId,
+      "./result.py"
+    );
 
-    const command = `${process.env.PYTHON_PATH || "python"} ${pythonScriptPath}`;
+    const command = `${
+      process.env.PYTHON_PATH || "python"
+    } ${pythonScriptPath}`;
     const subprocess = require("child_process").spawn(command, [], {
       shell: true,
       env: {
         ...process.env, // Conservez les variables d'environnement existantes
         PYTHONUNBUFFERED: "1", // Pour éviter les problèmes de buffering
-        PYTHONPATH: (process.env["PYTHON_PATH"] || "") + path.join(__dirname, "../../python/"), // Ajoutez le chemin du script Python
+        PYTHONPATH:
+          (process.env["PYTHON_PATH"] || "") +
+          path.join(__dirname, "../../python/"), // Ajoutez le chemin du script Python
       },
     });
     let output = "";
@@ -155,7 +162,6 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
         res.status(200).json({ success: true, output });
       }
     });
-
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }

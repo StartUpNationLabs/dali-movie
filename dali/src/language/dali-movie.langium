@@ -82,12 +82,13 @@ fragment QuotedContent:
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 
-hidden terminal WS: /\s+/;
 terminal TIME: /\d+((h\d+)?m\d+)?s/;
+terminal ID: /[a-zA-Z0-9\-_\\\/.]+/;
+
+hidden terminal WS: /\s+/;
 
 terminal HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/;
 terminal PERCENTAGE: /([0-9]{1,2})/;
-terminal ID: /[a-zA-Z0-9\-_\\\/.]+/;
 terminal INT returns number: /[0-9]+/;
 terminal FreeTextInBrackets:
   '[' -> ']'
