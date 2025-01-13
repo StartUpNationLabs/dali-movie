@@ -39,7 +39,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@8"
+                "$ref": "#/rules@12"
               },
               "arguments": []
             },
@@ -131,17 +131,22 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@16"
               },
               "arguments": []
             }
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@15"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "file",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@17"
+              },
+              "arguments": []
+            }
           }
         ]
       },
@@ -173,17 +178,22 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@16"
               },
               "arguments": []
             }
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@15"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "file",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@17"
+              },
+              "arguments": []
+            }
           }
         ]
       },
@@ -211,12 +221,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@11"
+                "$ref": "#/rules@10"
               },
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@23"
+                  "$ref": "#/rules@16"
                 },
                 "arguments": []
               },
@@ -267,7 +277,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@20"
+                        "$ref": "#/rules@18"
                       },
                       "arguments": []
                     }
@@ -287,7 +297,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@18"
               },
               "arguments": []
             }
@@ -303,7 +313,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@16"
               },
               "arguments": []
             }
@@ -328,11 +338,16 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "value": "text"
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@16"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "content",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@17"
+              },
+              "arguments": []
+            }
           },
           {
             "$type": "Group",
@@ -427,7 +442,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@23"
+                "$ref": "#/rules@16"
               },
               "arguments": []
             }
@@ -458,12 +473,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@11"
+                "$ref": "#/rules@10"
               },
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@23"
+                  "$ref": "#/rules@16"
                 },
                 "arguments": []
               },
@@ -517,7 +532,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                         "terminal": {
                           "$type": "RuleCall",
                           "rule": {
-                            "$ref": "#/rules@20"
+                            "$ref": "#/rules@18"
                           },
                           "arguments": []
                         }
@@ -537,7 +552,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@18"
                   },
                   "arguments": []
                 }
@@ -548,6 +563,42 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "Alternatives",
             "elements": [
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Assignment",
+                    "feature": "mode",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "referential",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "CrossReference",
+                      "type": {
+                        "$ref": "#/rules@11"
+                      },
+                      "terminal": {
+                        "$type": "RuleCall",
+                        "rule": {
+                          "$ref": "#/rules@16"
+                        },
+                        "arguments": []
+                      },
+                      "deprecatedSyntax": false
+                    }
+                  }
+                ]
+              },
               {
                 "$type": "Group",
                 "elements": [
@@ -570,48 +621,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@11"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@23"
-                        },
-                        "arguments": []
-                      },
-                      "deprecatedSyntax": false
-                    }
-                  }
-                ]
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "mode",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@10"
-                      },
-                      "arguments": []
-                    }
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "referential",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "CrossReference",
-                      "type": {
-                        "$ref": "#/rules@12"
-                      },
-                      "terminal": {
-                        "$type": "RuleCall",
-                        "rule": {
-                          "$ref": "#/rules@23"
+                          "$ref": "#/rules@16"
                         },
                         "arguments": []
                       },
@@ -643,11 +658,16 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "value": "add"
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@16"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "content",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@17"
+              },
+              "arguments": []
+            }
           },
           {
             "$type": "Keyword",
@@ -660,7 +680,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@18"
               },
               "arguments": []
             }
@@ -668,6 +688,42 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "Alternatives",
             "elements": [
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Assignment",
+                    "feature": "mode",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "referential",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "CrossReference",
+                      "type": {
+                        "$ref": "#/rules@11"
+                      },
+                      "terminal": {
+                        "$type": "RuleCall",
+                        "rule": {
+                          "$ref": "#/rules@16"
+                        },
+                        "arguments": []
+                      },
+                      "deprecatedSyntax": false
+                    }
+                  }
+                ]
+              },
               {
                 "$type": "Group",
                 "elements": [
@@ -690,48 +746,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@11"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@23"
-                        },
-                        "arguments": []
-                      },
-                      "deprecatedSyntax": false
-                    }
-                  }
-                ]
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "mode",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@10"
-                      },
-                      "arguments": []
-                    }
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "referential",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "CrossReference",
-                      "type": {
-                        "$ref": "#/rules@12"
-                      },
-                      "terminal": {
-                        "$type": "RuleCall",
-                        "rule": {
-                          "$ref": "#/rules@23"
+                          "$ref": "#/rules@16"
                         },
                         "arguments": []
                       },
@@ -757,43 +777,13 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@23"
+                    "$ref": "#/rules@16"
                   },
                   "arguments": []
                 }
               }
             ],
             "cardinality": "?"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "Export",
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "export"
-          },
-          {
-            "$type": "Keyword",
-            "value": "here"
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@15"
-            },
-            "arguments": []
           }
         ]
       },
@@ -827,7 +817,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@20"
+                        "$ref": "#/rules@18"
                       },
                       "arguments": []
                     },
@@ -887,7 +877,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@20"
+                        "$ref": "#/rules@18"
                       },
                       "arguments": []
                     },
@@ -1019,6 +1009,41 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
     },
     {
       "$type": "ParserRule",
+      "name": "Export",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "export"
+          },
+          {
+            "$type": "Keyword",
+            "value": "here"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "outputFilepath",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@17"
+              },
+              "arguments": []
+            }
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
       "name": "Color",
       "dataType": "string",
       "definition": {
@@ -1027,7 +1052,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@21"
+              "$ref": "#/rules@19"
             },
             "arguments": []
           },
@@ -1130,7 +1155,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@22"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
@@ -1148,83 +1173,6 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
       "wildcard": false
     },
     {
-      "$type": "ParserRule",
-      "name": "QuotedFileName",
-      "fragment": true,
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "\\""
-          },
-          {
-            "$type": "Assignment",
-            "feature": "file",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@23"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": "\\""
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "QuotedContent",
-      "fragment": true,
-      "definition": {
-        "$type": "Assignment",
-        "feature": "content",
-        "operator": "=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$ref": "#/rules@25"
-          },
-          "arguments": []
-        }
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "ML_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "SL_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
-      },
-      "fragment": false
-    },
-    {
       "$type": "TerminalRule",
       "hidden": true,
       "name": "WS",
@@ -1236,10 +1184,30 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
     },
     {
       "$type": "TerminalRule",
+      "name": "ID",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/[_a-zA-Z][\\\\w_]*/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "QUOTED_STRING",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/([\\"'])(?:(?=(\\\\\\\\?))\\\\2.)*?\\\\1/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
       "name": "TIME",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/\\\\d+((h\\\\d+)?m\\\\d+)?s/"
+        "regex": "/\\\\d+(m\\\\d+)?s/"
       },
       "fragment": false,
       "hidden": false
@@ -1266,55 +1234,23 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
     },
     {
       "$type": "TerminalRule",
-      "name": "ID",
+      "hidden": true,
+      "name": "ML_COMMENT",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/[a-zA-Z0-9\\\\-_\\\\\\\\\\\\/.]+/"
+        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
       },
-      "fragment": false,
-      "hidden": false
+      "fragment": false
     },
     {
       "$type": "TerminalRule",
-      "name": "INT",
-      "type": {
-        "$type": "ReturnType",
-        "name": "number"
-      },
+      "hidden": true,
+      "name": "SL_COMMENT",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/[0-9]+/"
+        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
       },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "FreeTextInBrackets",
-      "definition": {
-        "$type": "TerminalGroup",
-        "elements": [
-          {
-            "$type": "CharacterRange",
-            "left": {
-              "$type": "Keyword",
-              "value": "["
-            }
-          },
-          {
-            "$type": "UntilToken",
-            "terminal": {
-              "$type": "CharacterRange",
-              "left": {
-                "$type": "Keyword",
-                "value": "]"
-              }
-            }
-          }
-        ]
-      },
-      "fragment": false,
-      "hidden": false
+      "fragment": false
     }
   ],
   "definesHiddenTokens": false,
