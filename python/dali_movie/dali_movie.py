@@ -1,7 +1,7 @@
 import sys
 import os
 
-from moviepy import (VideoFileClip, AudioFileClip, VideoClip, CompositeVideoClip, concatenate_videoclips, concatenate_audioclips )
+from moviepy import (ColorClip, VideoFileClip, AudioFileClip, VideoClip, CompositeVideoClip, concatenate_videoclips, concatenate_audioclips )
 from moviepy.audio.AudioClip import AudioClip
 from moviepy.video.VideoClip import VideoClip
 from moviepy.video.VideoClip import TextClip
@@ -13,7 +13,7 @@ from .perf_profiler import Perf
 
 class Dali_movie():
     def __init__(self, font_path):
-        self.export_mode = "timeline" #sys.argv[1]
+        self.export_mode = "export" #sys.argv[1]
 
         self._font_path = font_path
         self._video_track = []
@@ -25,9 +25,14 @@ class Dali_movie():
         
         if self.export_mode == "export":
             if self.export_mode != "timeline" : print(self._video_track)
-            video_track = [clip.media for clip in self._video_track]
-            audio_track = [clip.media for clip in self._audio_track]
-            subtitle_track = [clip.media for clip in self._subtitle_track]
+
+            video_track = self._add_blanks(self._video_track)
+            audio_track = self._add_blanks(self._audio_track)
+            subtitle_track = self._add_blanks(self._subtitle_track)
+
+            video_track = [clip.media for clip in video_track]
+            audio_track = [clip.media for clip in audio_track]
+            subtitle_track = [clip.media for clip in subtitle_track]
 
             final_track = [concatenate_videoclips(video_track, method="compose")]
             if(len(audio_track) > 0):
@@ -309,9 +314,23 @@ class Dali_movie():
                 dali_clip_on_track.start = dali_clip_on_track.start + offset
                 dali_clip_on_track.end = dali_clip_on_track.start + dali_clip_on_track.media.duration
 
+    def _add_blanks(self, track):
+        result = []
+        for i in range(len(track)):
+            if i > 0:
+                previous_media = track[i-1]
+                space = track[i].start - previous_media.end
+            else:
+                space = track[i].start
+            if space > 0.1:
+                dali_clip = Dali_clip("blank", ColorClip((1920,1080) ,duration=space), previous_media.end)
+                result.append(dali_clip)    
+            result.append(track[i])
+        return result
+
+
 
     def __str__(self):
-
         return "audio     :" + str(self._audio_track) + \
                 "\nsubtitle :" + str(self._subtitle_track) + \
                 "\nvideo    :" + str(self._video_track) + "\n"
