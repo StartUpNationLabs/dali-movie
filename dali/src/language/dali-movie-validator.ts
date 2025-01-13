@@ -169,12 +169,13 @@ export class DaliMovieValidator {
             validateTime(from, command, "Invalid start time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "from");
           }
         case "AddText":
+        case "Text":
           let duration = (command as any).duration;
           if (duration && duration !== "") {
             validateTime(duration, command, "Invalid end time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "duration");
           }
 
-          if (command.$type !== "Cut") {
+          if (!["Cut", "Text"].includes(command.$type)) {
             commands.push(command);
           }
       }

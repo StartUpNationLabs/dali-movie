@@ -1,7 +1,7 @@
 import { toString } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AddMedia, Command, Cut, LoadAudio, LoadVideo, Script } from "../language/generated/ast.js";
+import type { AddMedia, AddText, Command, Cut, LoadAudio, LoadVideo, Script, Text } from "../language/generated/ast.js";
 import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(model: Script, filePath: string, destination: string | undefined): string {
@@ -34,8 +34,7 @@ function generateCommand(command: Command): string {
         case "AddMedia":
             return addMedia(command);
         case "AddText":
-            throw new Error(`Unsupported command type: AddText`);
-        // return addText(command);
+            return addText(command);
         case "Cut":
             return cut(command);
         case "LoadAudio":
@@ -43,8 +42,7 @@ function generateCommand(command: Command): string {
         case "LoadVideo":
             return importVideo(command);
         case "Text":
-            throw new Error(`Unsupported command type: Text`);
-        // return text(command);
+            return text(command);
         default:
             throw new Error(`Unsupported command type`);
     }
@@ -64,14 +62,14 @@ function addMedia(command: AddMedia): string {
             name: variableName
         });
     }
-    return cutCode + daliFunction("add", getParameters(command, variableName));
+    return cutCode + daliFunction("add", getAddMediaParameters(command, variableName));
 }
 
-function getParameters(command: AddMedia, variableName?: string): string {
+function getAddMediaParameters(command: AddMedia, variableName?: string): string {
     let parameters = variableName ?? `${command.mediaRef.$refText}`;
     if (command.mode) {
         const mode = command.mode;
-        parameters += `, mode=${getMode(mode)}`;
+        parameters += `, mode=${getAddMediaMode(mode)}`;
         parameters += `, anchor_type=${quoted(mode.anchor)}`;
         if (mode.offset) parameters += `, offset=${getTime(mode.offset)}`;
     }
@@ -79,7 +77,7 @@ function getParameters(command: AddMedia, variableName?: string): string {
     return parameters;
 }
 
-function getMode(mode: AddMedia["mode"]): string {
+function getAddMediaMode(mode: AddMedia["mode"]): string {
     switch (mode?.$type) {
         case "StartingRule":
             return "MODE.START";
@@ -90,12 +88,24 @@ function getMode(mode: AddMedia["mode"]): string {
     }
 }
 
-/*function addText(command: AddText): string {
-    console.warn('addText is not implemented');
-    console.warn('\tDifference between title and subtitle is not handled');
-    const parameters = `${command.name}, ${command.duration}`;
-    return daliFunction("addText", parameters);
-}*/
+function addText(command: AddText): string {
+    let variableName = command.name ?? `${contentToVariableCase(command.content)}_${command.duration}`;
+    const textCommand: Text = {
+        $container: command.$container,
+        $type: "Text",
+        content: command.content,
+        duration: command.duration,
+        name: variableName
+    };
+    let textCode = text(textCommand);
+    return textCode + addMedia({
+        $container: command.$container,
+        $type: "AddMedia",
+        mediaRef: { ref: textCommand, $refText: variableName },
+        mode: command.mode,
+        referential: command.referential
+    });
+}
 
 function cut(command: Cut): string {
     const start = command.name + " = ";
@@ -117,14 +127,30 @@ function importVideo(command: LoadVideo): string {
     return `${command.name} = ${daliFunction("importVideo", quoted(command.file))}`;
 }
 
-/*function text(command: Text): string {
-    console.warn('createText is not implemented');
-    const parameters = `${command.name}, backgroundColor=${command.backgroundColor}, textColor=${command.textColor}`;
-    return daliFunction("createText", parameters);
-}*/
+function text(command: Text): string {
+    const start = command.name + " = ";
+    return start + daliFunction("text", getTextParameters(command));
+}
+
+function getTextParameters(command: Text): string {
+    let parameters = `${getTextContent(command.content)}, duration=${getTime(command.duration)}`;
+    if (command.backgroundColor) parameters += `, backgroundColor=${command.backgroundColor}`;
+    if (command.textColor) parameters += `, textColor=${command.textColor}`;
+    if (command.percentageFromLeft && command.percentageFromTop)
+        parameters += `, position=(${command.percentageFromLeft / 100}, ${command.percentageFromTop / 100})`;
+    return parameters;
+}
+
+function getTextContent(content: string): string {
+    return quoted(content.slice(1, content.length - 1).replaceAll(/"/g, "\\\"")); // ["texte"] -> "\"texte\""
+}
 
 function daliFunction(functionName: string, parameters: string): string {
     return `dali_movie.${functionName}(${parameters})\n`;
+}
+
+function contentToVariableCase(content: string): string {
+    return content.replaceAll(" ", "_").replaceAll(/\W/g, "");
 }
 
 function quoted(text?: string): string {

@@ -18,4 +18,23 @@ add introSound ending 3s before clip1
 add introSound from end for 26s ending 3s before clip1
 add introSound starting after clip1a
 
+text ["test"] for 15s color RED position 100,25 background BLACK named testTitle1
+text [test2] for 8s named testTitle2
+add testTitle1
+add testTitle2 starting after testTitle1
+
+add [test title] for 10s
+add [test title] for 10s named testTitle3
+add [test title2] for 10s ending before clip1
+add [test title2] for 10s ending before clip1 named testTitle4
+add [test title3] for 10s starting 2s after clip1a
+add [test title3] for 10s starting 2s after clip1a named testTitle5
+
+add [test subtitle] for 10s
+add [test subtitle] for 10s named testSubTitle
+add [test subtitle2] for 10s ending before clip1
+add [test subtitle2] for 10s ending before clip1 named testSubTitle2
+add [test subtitle3] for 10s starting 2s after clip1a
+add [test subtitle3] for 10s starting 2s after clip1a named testSubTitle3
+
 export here "./output.mp4"
