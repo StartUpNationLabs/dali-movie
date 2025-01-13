@@ -1,32 +1,53 @@
 import {useEffect, useRef, useState} from "react";
 import ReactApexChart from "react-apexcharts";
 import ApexCharts from "apexcharts"
-import { DateTime } from "luxon";
+import {useQuery,} from 'react-query';
+import {useCodeStore, useSessionStore} from "./state.js";
+import {Configuration, DefaultApi} from "../openapi";
+
 export const Timeline = (
     props: {
         height: string;
     }
 ) => {
     const ref = useRef<any>(null);
+    const code = useCodeStore((state) => state.code);
+    const sessionId = useSessionStore((state) => state.session);
+    // useQuery
+    useQuery(['timeline'], async () => {
+            const api = new DefaultApi(
+                new Configuration({
+                    basePath: 'http://localhost:8080'
+                })
+            );
+            return  (await api.sessionIdTimelinePost(sessionId, {
+                languim: code,
+            })).data;
+        }, {
+            refetchInterval: 1000,
+            refetchOnWindowFocus: true
+        }
+    );
+
 
     useEffect(() => {
         // set Timeout to wait for the chart to be rendered
 
         const timeout = setTimeout(() => {
 
-            const chart = ref.current;
-            if (chart) {
-                ApexCharts.exec('chart', 'updateOptions', {
-                        plotOptions: {
-                            bar: {
-                                horizontal: true,
-                                barHeight: '80%'
+                const chart = ref.current;
+                if (chart) {
+                    ApexCharts.exec('chart', 'updateOptions', {
+                            plotOptions: {
+                                bar: {
+                                    horizontal: true,
+                                    barHeight: '80%'
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                }
             }
-        }
             , 100);
         return () => {
             clearTimeout(timeout);
@@ -143,10 +164,19 @@ export const Timeline = (
             xaxis: {
                 type: 'datetime',
                 labels: {
-                    formatter: function(value: any, timestamp: string | number | Date, opts: { dateFormatter: (arg0: Date) => { (): any; new(): any; format: { (arg0: string): any; new(): any; }; }; }) {
+                    formatter: function (value: any, timestamp: string | number | Date, opts: {
+                        dateFormatter: (arg0: Date) => {
+                            (): any;
+                            new(): any;
+                            format: {
+                                (arg0: string): any;
+                                new(): any;
+                            };
+                        };
+                    }) {
                         console.log(value, timestamp, opts);
                         // map to hours and minutes and  seconds from 2019-03-05T00:00:00
-                        const  totalMilliseconds = value;
+                        const totalMilliseconds = value;
                         const milliseconds = Math.floor(totalMilliseconds % 1000);
                         const seconds = Math.floor((totalMilliseconds / 1000) % 60);
                         const minutes = Math.floor((totalMilliseconds / (1000 * 60)) % 60);
