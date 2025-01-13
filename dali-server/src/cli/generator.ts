@@ -16,11 +16,10 @@ import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(
   model: Script,
-  filePath: string,
-  destination: string | undefined
+  destination: string,
+  filename: string
 ): string {
-  const data = extractDestinationAndName(filePath, destination);
-  const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
+  const generatedFilePath = path.join(destination, filename);
 
   let code: string = `from dali_movie.dali_movie import Dali_movie, MODE, ANCHOR_TYPE
 from moviepy.audio.AudioClip import AudioClip
@@ -36,8 +35,8 @@ dali_movie = Dali_movie(font_path)
 
   code += "\n" + daliFunction("export", quoted(model.export?.file));
 
-  if (!fs.existsSync(data.destination)) {
-    fs.mkdirSync(data.destination, { recursive: true });
+  if (!fs.existsSync(destination)) {
+    fs.mkdirSync(destination, { recursive: true });
   }
   fs.writeFileSync(generatedFilePath, toString(code));
   return generatedFilePath;
