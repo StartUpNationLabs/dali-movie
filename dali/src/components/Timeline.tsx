@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import ReactApexChart from "react-apexcharts";
 import ApexCharts from "apexcharts"
-
+import { DateTime } from "luxon";
 export const Timeline = (
     props: {
         height: string;
@@ -36,126 +36,98 @@ export const Timeline = (
 
         series: [
             {
-                name: 'Bob',
+                name: 'Sound',
                 data: [
                     {
-                        x: 'Design',
+                        x: 'Sound1',
                         y: [
-                            new Date('2019-03-05').getTime(),
-                            new Date('2019-03-08').getTime()
+                            50,
+                            80
                         ]
                     },
                     {
-                        x: 'Code',
+                        x: 'Sound2',
                         y: [
-                            new Date('2019-03-02').getTime(),
-                            new Date('2019-03-05').getTime()
+                            20,
+                            50
                         ]
                     },
                     {
-                        x: 'Code',
+                        x: 'Sound3',
                         y: [
-                            new Date('2019-03-05').getTime(),
-                            new Date('2019-03-07').getTime()
+                            50,
+                            70
                         ]
-                    },
-                    {
-                        x: 'Test',
-                        y: [
-                            new Date('2019-03-03').getTime(),
-                            new Date('2019-03-09').getTime()
-                        ]
-                    },
-                    {
-                        x: 'Test',
-                        y: [
-                            new Date('2019-03-08').getTime(),
-                            new Date('2019-03-11').getTime()
-                        ]
-                    },
-                    {
-                        x: 'Validation',
-                        y: [
-                            new Date('2019-03-11').getTime(),
-                            new Date('2019-03-16').getTime()
-                        ]
-                    },
-                    {
-                        x: 'Design',
-                        y: [
-                            new Date('2019-03-01').getTime(),
-                            new Date('2019-03-03').getTime()
-                        ],
                     }
                 ]
             },
             {
-                name: 'Joe',
+                name: 'Video',
                 data: [
                     {
-                        x: 'Design',
+                        x: 'Video1',
                         y: [
-                            new Date('2019-03-02').getTime(),
-                            new Date('2019-03-05').getTime()
+                            20,
+                            50
                         ]
                     },
                     {
-                        x: 'Test',
+                        x: 'Video2',
                         y: [
-                            new Date('2019-03-06').getTime(),
-                            new Date('2019-03-16').getTime()
+                            60,
+                            160
                         ],
                         goals: [
                             {
                                 name: 'Break',
-                                value: new Date('2019-03-10').getTime(),
+                                value: 100,
                                 strokeColor: '#CD2F2A'
                             }
                         ]
                     },
                     {
-                        x: 'Code',
+                        x: 'Video3',
                         y: [
-                            new Date('2019-03-03').getTime(),
-                            new Date('2019-03-07').getTime()
+                            30,
+                            70
                         ]
                     },
                     {
-                        x: 'Deployment',
+                        x: 'Video4',
                         y: [
-                            new Date('2019-03-20').getTime(),
-                            new Date('2019-03-22').getTime()
+                            200,
+                            220
                         ]
                     },
                     {
                         x: 'Design',
                         y: [
-                            new Date('2019-03-10').getTime(),
-                            new Date('2019-03-16').getTime()
+                            100,
+                            160
                         ]
                     }
                 ]
             },
             {
-                name: 'Dan',
+                name: 'Text',
                 data: [
                     {
-                        x: 'Code',
+                        x: 'Text1',
                         y: [
-                            new Date('2019-03-10').getTime(),
-                            new Date('2019-03-17').getTime()
+                            100,
+                            170
                         ]
                     },
                     {
-                        x: 'Validation',
+                        x: 'Text2',
                         y: [
-                            new Date('2019-03-05').getTime(),
-                            new Date('2019-03-09').getTime()
+                            50,
+                            90
                         ],
                         goals: [
                             {
                                 name: 'Break',
-                                value: new Date('2019-03-07').getTime(),
+                                value: 70,
                                 strokeColor: '#CD2F2A'
                             }
                         ]
@@ -176,7 +148,20 @@ export const Timeline = (
                 }
             },
             xaxis: {
-                type: 'datetime'
+                type: 'datetime',
+                labels: {
+                    formatter: function(value: any, timestamp: string | number | Date, opts: { dateFormatter: (arg0: Date) => { (): any; new(): any; format: { (arg0: string): any; new(): any; }; }; }) {
+                        console.log(value, timestamp, opts);
+                        // map to hours and minutes and  seconds from 2019-03-05T00:00:00
+                        const  totalMilliseconds = value;
+                        const milliseconds = Math.floor(totalMilliseconds % 1000);
+                        const seconds = Math.floor((totalMilliseconds / 1000) % 60);
+                        const minutes = Math.floor((totalMilliseconds / (1000 * 60)) % 60);
+                        const hours = Math.floor((totalMilliseconds / (1000 * 60 * 60)) % 24);
+
+                        return hours + ':' + minutes + ':' + seconds + ':' + milliseconds;
+                    }
+                }
             },
             stroke: {
                 width: 1
@@ -208,8 +193,6 @@ export const Timeline = (
                  ref={ref}
             >
                 <ReactApexChart
-
-
                     options={state.options} series={state.series} type="rangeBar" height={'100%'}/>
             </div>
             <div id="html-dist"></div>

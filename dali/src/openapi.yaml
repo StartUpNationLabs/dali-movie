@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Dali Video API
+
+paths:
+  /{session_id}/timeline:
+    post:
+      summary: Get timeline for a session
+      description: Get timeline for a session
+      parameters:
+        - name: session_id
+          in: path
+          description: The session ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                languim:
+                  type: string
+                  description: The languim language code
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeline:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        data:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              x:
+                                type: string
+                              y:
+                                type: array
+                                items:
+                                  type: number
+                              goals:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    value:
+                                      type: number
+                                    strokeColor:
+                                      type: string
+                                  required:
+                                    - name
+                                    - value
+                                    - strokeColor
+                                minItems: 0
+                            required:
+                              - x
+                              - y
+                      required:
+                        - name
+                        - data
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        message:
+                          type: string
+                      required:
+                        - name
+                        - message
+                    minItems: 0
+
+  /{session_id}/generate:
+    post:
+      summary: Generate a Video
+      description: Generate a Video
+      parameters:
+        - name: session_id
+          in: path
+          description: The session ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                languim:
+                  type: string
+                  description: The languim language code
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  video:
+                    type: string
+                    description: The video URL
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        message:
+                          type: string
+                      required:
+                        - name
+                        - message
+                    minItems: 0
