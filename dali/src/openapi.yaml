@@ -30,6 +30,89 @@ paths:
           description: OK
           content:
             application/json:
+              examples:
+                example1:
+                  value:
+                    [
+                      {
+                        name: 'Sound',
+                        data: [
+                          {
+                            x: 'Sound1',
+                            y: [
+                              50,
+                              80
+                            ]
+                          },
+                          {
+                            x: 'Sound2',
+                            y: [
+                              20,
+                              50
+                            ]
+                          },
+                          {
+                            x: 'Sound3',
+                            y: [
+                              50,
+                              70
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        name: 'Video',
+                        data: [
+                          {
+                            x: 'Video1',
+                            y: [
+                              20,
+                              50
+                            ]
+                          },
+                          {
+                            x: 'Video2',
+                            y: [
+                              60,
+                              160
+                            ]
+                          },
+                          {
+                            x: 'Video3',
+                            y: [
+                              30,
+                              70
+                            ]
+                          },
+                          {
+                            x: 'Video4',
+                            y: [
+                              200,
+                              220
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        name: 'Text',
+                        data: [
+                          {
+                            x: 'Text1',
+                            y: [
+                              100,
+                              170
+                            ]
+                          },
+                          {
+                            x: 'Text2',
+                            y: [
+                              50,
+                              90
+                            ]
+                          },
+                        ]
+                      }
+                    ]
               schema:
                 type: object
                 properties:
@@ -87,6 +170,7 @@ paths:
                         - message
                     minItems: 0
 
+
   /{session_id}/generate:
     post:
       summary: Generate a Video
@@ -108,6 +192,7 @@ paths:
                 languim:
                   type: string
                   description: The languim language code
+
       responses:
         '200':
           description: OK

@@ -98,13 +98,6 @@ export const Timeline = (
                             200,
                             220
                         ]
-                    },
-                    {
-                        x: 'Design',
-                        y: [
-                            100,
-                            160
-                        ]
                     }
                 ]
             },
