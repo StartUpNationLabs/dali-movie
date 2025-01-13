@@ -10,8 +10,6 @@ import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
 import { generateMoviePython } from "./cli/generator.js";
 
-import { v4 as uuid } from "uuid";
-
 const app = express();
 const PORT = 5000;
 
@@ -159,6 +157,6 @@ function updateFilePath(
 
   const exportValue = document.parseResult.value.export;
   if (exportValue) {
-    exportValue.outputFilepath = prefix + exportValue.outputFilepath;
+    exportValue.file = prefix + exportValue.file;
   }
 }
