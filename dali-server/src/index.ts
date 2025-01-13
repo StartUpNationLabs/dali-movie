@@ -165,12 +165,28 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
         if (lastPart) {
           res.status(200).json({
             success: true,
-            data: JSON.parse(lastPart.replace(/'/g, '"')),
+            timeline: JSON.parse(lastPart.replace(/'/g, '"')),
+            errors: [],
           });
         } else {
-          res
-            .status(400)
-            .json({ success: false, data: "Failed to parse output" });
+          res.status(400).json({
+            success: false,
+            timeline: [
+              {
+                name: "Video",
+                data: [],
+              },
+              {
+                name: "Sound",
+                data: [],
+              },
+              {
+                name: "Subtitles",
+                data: [],
+              },
+            ],
+            errors: ["Failed to parse output"],
+          });
         }
       }
     });
