@@ -16,13 +16,7 @@ export function registerValidationChecks(services: DaliMovieServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.DaliMovieValidator;
   const checks: ValidationChecks<DaliMovieAstType> = {
-    Script: [
-      validator.validateScriptUnicityOfIds,
-      validator.validateStartBeforeEnd,
-      validator.validatorScriptPreventEmptyFilename,
-      validator.validateAllTimeFormat,
-      validator.validateIllegalIdReferences,
-    ],
+    Script: [validator.validateScriptUnicityOfIds, validator.validateStartBeforeEnd, validator.validatorScriptPreventEmptyFilename, validator.validateAllTimeFormat, validator.validateIllegalIdReferences],
   };
   registry.register(checks, validator);
 }
@@ -59,10 +53,7 @@ export class DaliMovieValidator {
     });
   }
 
-  validateIllegalIdReferences(
-    script: Script,
-    accept: ValidationAcceptor
-  ): void {
+  validateIllegalIdReferences(script: Script, accept: ValidationAcceptor): void {
     script.commands.forEach((command) => {
       switch (command.$type) {
         case "Cut":
@@ -75,10 +66,10 @@ export class DaliMovieValidator {
                 node: command,
                 property: "name",
               }
-            );
+            )
           }
       }
-    });
+    })
   }
 
   validateStartBeforeEnd(script: Script, accept: ValidationAcceptor): void {
@@ -110,20 +101,17 @@ export class DaliMovieValidator {
     });
   }
 
-  validatorScriptPreventEmptyFilename(
-    script: Script,
-    accept: ValidationAcceptor
-  ): void {
-    const validateFilepath = (
-      filepath: string,
-      command: any,
-      errorMessage: string
-    ) => {
+  validatorScriptPreventEmptyFilename(script: Script, accept: ValidationAcceptor): void {
+    const validateFilepath = (filepath: string, command: any, errorMessage: string) => {
       if (!filepath || filepath === "") {
-        accept("error", errorMessage, {
-          node: command,
-          property: "file",
-        });
+        accept(
+          "error",
+          errorMessage,
+          {
+            node: command,
+            property: "file",
+          }
+        );
       }
     };
 
@@ -132,50 +120,45 @@ export class DaliMovieValidator {
         case "LoadAudio":
         case "LoadVideo":
           let filepath = (command as any).file;
-          validateFilepath(
-            filepath,
-            command,
-            "The filepath of the file is empty. Please enter a filepath."
-          );
+          validateFilepath(filepath, command, "The filepath of the file is empty. Please enter a filepath.");
           break;
         case "AddText":
-        case "Text":
+          case "Text":
           let text = (command as AddText).content;
           if (text === "") {
-            accept("error", "The text to add is empty. Please enter a text.", {
-              node: command,
-              property: "content",
-            });
+            accept(
+              "error",
+              "The text to add is empty. Please enter a text.",
+              {
+                node: command,
+                property: "content",
+              }
+            );
           }
           break;
-      }
-    });
+        }
+      });
 
-    if (script.export) {
-      validateFilepath(
-        script.export.outputFilepath,
-        script.export,
-        "The filepath of the output file is empty. Please enter a valid output path."
-      );
-    }
+      if (script.export) {
+        validateFilepath(script.export.file, script.export, "The filepath of the output file is empty. Please enter a valid output path.");
+      }
   }
 
   validateAllTimeFormat(script: Script, accept: ValidationAcceptor): void {
-    const validateTime = (
-      time: string,
-      command: any,
-      errorMessage: string,
-      property: string
-    ) => {
+    const validateTime = (time: string, command: any, errorMessage: string, property: string) => {
       if (!["start", "end"].includes(time) && !this.validateTimeFormat(time)) {
-        accept("error", errorMessage, {
-          node: command,
-          property: property,
-        });
+        accept(
+          "error",
+          errorMessage,
+          {
+            node: command,
+            property: property,
+          }
+        );
       }
     };
 
-    let commands: Command[] = [];
+    let commands : Command[] = [];
 
     script.commands.forEach((command) => {
       switch (command.$type) {
@@ -183,23 +166,13 @@ export class DaliMovieValidator {
         case "AddMedia":
           let from = (command as any).from;
           if (from && from !== "") {
-            validateTime(
-              from,
-              command,
-              "Invalid start time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).",
-              "from"
-            );
+            validateTime(from, command, "Invalid start time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "from");
           }
         case "AddText":
         case "Text":
           let duration = (command as any).duration;
           if (duration && duration !== "") {
-            validateTime(
-              duration,
-              command,
-              "Invalid end time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).",
-              "duration"
-            );
+            validateTime(duration, command, "Invalid end time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "duration");
           }
 
           if (!["Cut", "Text"].includes(command.$type)) {
@@ -218,12 +191,7 @@ export class DaliMovieValidator {
       if (!offset || offset === "") {
         return;
       }
-      validateTime(
-        offset,
-        mode,
-        "Invalid offset time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).",
-        "offset"
-      );
+      validateTime(offset, mode, "Invalid offset time format. Use XhYmZs (e.g. 1h2m3s or 2m3s or 3s), where X, Y, and Z are numbers (Y and Z ≤ 59).", "offset");
     });
   }
 
@@ -232,46 +200,46 @@ export class DaliMovieValidator {
     to: string | undefined
   ): boolean {
     if (!from || !to) return false;
-
+    
     return this.timeToSecond(from) > this.timeToSecond(to);
   }
 
-  private timeToSecond(time: string): number {
+  private timeToSecond(time: string) : number {
     let res = 0;
     let index = 0;
 
     if (time.includes("h")) {
-      res += parseInt(time.substring(0, time.indexOf("h"))) * 3600;
-      index = time.indexOf("h") + 1;
+        res += parseInt(time.substring(0, time.indexOf("h"))) * 3600;
+        index=time.indexOf("h")+1
     }
 
     if (time.includes("m")) {
       res += parseInt(time.substring(index, time.indexOf("m"))) * 60;
-      index = time.indexOf("m") + 1;
+      index=time.indexOf("m")+1
     }
 
-    res += parseInt(time.substring(index, time.length - 1));
+    res += parseInt(time.substring(index, time.length-1));
 
     return res;
   }
 
   private validateTimeFormat(time: string): boolean {
-    if (!/^\d+((h\d+)?m\d+)?s$/.test(time)) {
+     if(!/^\d+((h\d+)?m\d+)?s$/.test(time)) {
       return false;
-    }
-    let index = 0;
+     }
+     let index = 0;
 
-    if (time.includes("h")) {
-      index = time.indexOf("h") + 1;
-    }
+     if (time.includes("h")) {
+        index = time.indexOf("h") + 1;
+     }
 
-    if (time.includes("m")) {
-      if (parseInt(time.substring(index, time.indexOf("m"))) > 59) {
-        return false;
-      }
-      index = time.indexOf("m") + 1;
-    }
+     if (time.includes("m")) {
+        if (parseInt(time.substring(index, time.indexOf("m"))) > 59) {
+          return false;
+        }
+        index = time.indexOf("m") + 1;
+     }
 
-    return parseInt(time.substring(index, time.length - 1)) <= 59;
+     return parseInt(time.substring(index, time.length-1)) <= 59;
   }
 }

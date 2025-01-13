@@ -8,7 +8,6 @@ import { createDaliMovieServices } from "./dali-movie-module.js";
 import { EmptyFileSystem, LangiumDocument } from "langium";
 import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
-import { generateMoviePython } from "./cli/generator.js"
 
 const app = express();
 const PORT = 5000;
@@ -98,7 +97,7 @@ app.post(
 );
 
 // API route to process timeline data
-app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
+app.post("/timeline/:sessionId", async (req: Request, res: Response) => {
   try {
     const sessionId = req.params.sessionId;
     if (!sessionId) {
@@ -111,15 +110,14 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const parse = parseHelper<Script>(services.DaliMovie);
 
     const requestBody = req.body;
-    const daliCode = requestBody.langium;
+    let daliCode = requestBody.langium;
     console.log("Code : ", daliCode);
 
     const document = await parse(daliCode);
-    updateFilePath(document, sessionId);
+    updateFilepath(document, sessionId);
+
     const model = document.parseResult.value;
     console.log("Code : ", model);
-    const python = generateMoviePython(model, "./exemple.dali", "./result.py");
-    console.log(python);
 
     res.status(200).json("AST generated");
   } catch (error: any) {
@@ -136,7 +134,7 @@ app.listen(PORT, () => {
 });
 
 // Update file paths
-function updateFilePath(
+function updateFilePaths(
   document: LangiumDocument<Script>,
   prefix: string
 ): void {

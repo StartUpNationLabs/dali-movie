@@ -98,28 +98,23 @@ app.post(
 );
 
 // API route to process timeline data
-app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
-  try {
-    const sessionId = req.params.sessionId;
-    if (!sessionId) {
-      res
-        .status(400)
-        .json({ success: false, message: "Session ID is required" });
-      return;
-    }
-    const services = createDaliMovieServices(EmptyFileSystem);
-    const parse = parseHelper<Script>(services.DaliMovie);
+app.post("/timeline/:sessionId", async (req: Request, res: Response) => {
+    try {
+        const sessionId = req.params.sessionId;
+        if (!sessionId) {
+            res.status(400).json({ success: false, message: "Session ID is required" });
+            return;
+        }
+        const services = createDaliMovieServices(EmptyFileSystem);
+        const parse = parseHelper<Script>(services.DaliMovie);
 
-    const requestBody = req.body;
-    const daliCode = requestBody.langium;
-    console.log("Code : ", daliCode);
+        const requestBody = req.body;
+        const daliCode = requestBody.langium;
+        console.log("Code : ", daliCode);
 
-    const document = await parse(daliCode);
-    updateFilePath(document, sessionId);
-    const model = document.parseResult.value;
-    console.log("Code : ", model);
-    const python = generateMoviePython(model, "./exemple.dali", "./result.py");
-    console.log(python);
+       const document = await parse(daliCode);
+       const model = document.parseResult.value;
+       console.log("Code : ", model);
 
     res.status(200).json("AST generated");
   } catch (error: any) {

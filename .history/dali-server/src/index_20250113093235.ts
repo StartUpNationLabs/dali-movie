@@ -115,11 +115,8 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     console.log("Code : ", daliCode);
 
     const document = await parse(daliCode);
-    updateFilePath(document, sessionId);
     const model = document.parseResult.value;
     console.log("Code : ", model);
-    const python = generateMoviePython(model, "./exemple.dali", "./result.py");
-    console.log(python);
 
     res.status(200).json("AST generated");
   } catch (error: any) {

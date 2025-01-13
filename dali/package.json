@@ -48,6 +48,7 @@
     "react-dropzone": "^14.3.5",
     "react-query": "^3.39.3",
     "react-resizable-panels": "^2.1.7",
+    "uuid": "^11.0.5",
     "vscode": "npm:@codingame/monaco-vscode-api@~3.2.3",
     "vscode-languageclient": "~9.0.1",
     "vscode-languageserver": "~9.0.1",

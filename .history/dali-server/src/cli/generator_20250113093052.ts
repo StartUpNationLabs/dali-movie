@@ -1,8 +1,7 @@
 import { toString } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { v4 as uuidv4 } from "uuid";
-import type { AddMedia, AddText, Command, Cut, LoadAudio, LoadVideo, Script, Text } from "../language/generated/ast.js";
+import type { AddMedia, AddText, Command, Cut, LoadAudio, LoadVideo, Script, Text } from "../generated/ast.js";
 import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(model: Script, filePath: string, destination: string | undefined): string {
@@ -90,7 +89,7 @@ function getAddMediaMode(mode: AddMedia["mode"]): string {
 }
 
 function addText(command: AddText): string {
-    let variableName = command.name ?? getVariableName();
+    let variableName = command.name ?? `${contentToVariableCase(command.content)}_${command.duration}`;
     const textCommand: Text = {
         $container: command.$container,
         $type: "Text",
@@ -150,8 +149,8 @@ function daliFunction(functionName: string, parameters: string): string {
     return `dali_movie.${functionName}(${parameters})\n`;
 }
 
-function getVariableName(): string {
-    return `var_${uuidv4().replaceAll("-", "_")}`;
+function contentToVariableCase(content: string): string {
+    return content.replaceAll(" ", "_").replaceAll(/\W/g, "");
 }
 
 function quoted(text?: string): string {
