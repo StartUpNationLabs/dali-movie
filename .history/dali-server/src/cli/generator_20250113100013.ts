@@ -14,10 +14,9 @@ import type {
 
 export function generateMoviePython(
   model: Script,
-  destination: string,
-  filename: string
+  destination: string
 ): string {
-  const generatedFilePath = path.join(destination, filename);
+  const generatedFilePath = path.join(destination, "response.py");
 
   let code: string = `from dali_movie.dali_movie import Dali_movie, MODE, ANCHOR_TYPE
     from moviepy.audio.AudioClip import AudioClip

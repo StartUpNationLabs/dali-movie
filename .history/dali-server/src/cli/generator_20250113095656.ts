@@ -11,29 +11,30 @@ import type {
   Script,
   Text,
 } from "../generated/ast.js";
+import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateMoviePython(
   model: Script,
-  destination: string,
-  filename: string
+  destination: string
 ): string {
-  const generatedFilePath = path.join(destination, filename);
+  const generatedFilePath = path.join(destination, "response.py");
 
   let code: string = `from dali_movie.dali_movie import Dali_movie, MODE, ANCHOR_TYPE
-    from moviepy.audio.AudioClip import AudioClip
+from moviepy.audio.AudioClip import AudioClip
 
-    #INIT
-    font_path = "./dali_movie/resources/arial.TTF"
-    dali_movie = Dali_movie(font_path)
+#INIT
+font_path = "./dali_movie/resources/arial.TTF"
+dali_movie = Dali_movie(font_path)
 
-    #SCRIPT`;
+#SCRIPT
+`;
 
   model.commands.forEach((command) => (code += generateCommand(command)));
 
   code += "\n" + daliFunction("export", quoted(model.export?.outputFilepath));
 
-  if (!fs.existsSync(destination)) {
-    fs.mkdirSync(destination, { recursive: true });
+  if (!fs.existsSync(data.destination)) {
+    fs.mkdirSync(data.destination, { recursive: true });
   }
   fs.writeFileSync(generatedFilePath, toString(code));
   return generatedFilePath;

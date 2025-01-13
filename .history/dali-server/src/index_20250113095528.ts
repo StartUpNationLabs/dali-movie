@@ -10,8 +10,6 @@ import { parseHelper } from "langium/test";
 import { Script } from "./generated/ast.js";
 import { generateMoviePython } from "./cli/generator.js";
 
-import { v4 as uuid } from "uuid";
-
 const app = express();
 const PORT = 5000;
 
@@ -121,8 +119,7 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const model = document.parseResult.value;
 
     console.log("Code : ", model);
-    const filename = uuid() + ".py";
-    const python = generateMoviePython(model, "./" + sessionId, filename);
+    const python = generateMoviePython(model, "./"+sessionId);
     console.log(python);
 
     res.status(200).json("AST generated");

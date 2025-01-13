@@ -121,8 +121,7 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     const model = document.parseResult.value;
 
     console.log("Code : ", model);
-    const filename = uuid() + ".py";
-    const python = generateMoviePython(model, "./" + sessionId, filename);
+    const python = generateMoviePython(model, "./" + sessionId);
     console.log(python);
 
     res.status(200).json("AST generated");
