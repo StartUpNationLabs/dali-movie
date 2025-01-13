@@ -44,7 +44,7 @@ class Dali_movie():
             return output_filename
         else:
             timeline = self.print_timeline(self._video_track, self._audio_track, self._subtitle_track)
-            print("-----"+timeline)
+            print("-----"+str(timeline))
 
     def print_timeline(self, videos, audios, subtitles):
         timeline = [
