@@ -21,11 +21,11 @@ export const App = () => {
         ) => {
             const api = new DefaultApi(
                 new Configuration({
-                    basePath: 'http://localhost:8080'
+                    basePath: 'http://localhost:5000'
                 })
             );
             return (await api.sessionIdGeneratePost(sessionId, {
-                languim: code,
+                langium: code,
             })).data;
 
         }

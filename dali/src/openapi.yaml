@@ -22,7 +22,7 @@ paths:
             schema:
               type: object
               properties:
-                languim:
+                langium:
                   type: string
                   description: The languim language code
       responses:
@@ -190,7 +190,7 @@ paths:
             schema:
               type: object
               properties:
-                languim:
+                langium:
                   type: string
                   description: The languim language code
 

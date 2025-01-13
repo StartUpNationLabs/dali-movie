@@ -13,7 +13,7 @@ from .perf_profiler import Perf
 
 class Dali_movie():
     def __init__(self, font_path):
-        #EXPORT_MODE = sys.argv[1]
+        self.export_mode = "timeline" #sys.argv[1]
 
         self._font_path = font_path
         self._video_track = []
@@ -22,9 +22,9 @@ class Dali_movie():
 
     #EXPORT
     def export(self, output_filename = "./output.mp4"):
-
-        if EXPORT_MODE == "export":
-            print(self._video_track)
+        
+        if self.export_mode == "export":
+            if self.export_mode != "timeline" : print(self._video_track)
             video_track = [clip.media for clip in self._video_track]
             audio_track = [clip.media for clip in self._audio_track]
             subtitle_track = [clip.media for clip in self._subtitle_track]
@@ -41,25 +41,56 @@ class Dali_movie():
                 final_track = CompositeVideoClip(final_track)
 
             final_track[0].write_videofile(output_filename, fps=24)
+            return output_filename
         else:
-            timeline = print_timeline(self._video_track, self.audio_track, self._subtitle_track)
+            timeline = self.print_timeline(self._video_track, self._audio_track, self._subtitle_track)
             print(timeline)
 
-    def print_timeline(videos, audios, texts):
+    def print_timeline(self, videos, audios, subtitles):
         timeline = [
             {
-                name: 'Video',
-                data: []
+                "name": 'Video',
+                "data": []
             },
             {
-                name: 'Sound',
-                data: []
+                "name": 'Sound',
+                "data": []
             },
             {
-                name: 'Subtitles',
-                data: []
+                "name": 'Subtitles',
+                "data": []
             }
         ]
+
+        for video in videos:
+            timeline[0]["data"].append(
+                {
+                    "x": video.name,
+                    "y": [
+                        int(video.start*1000),
+                        int(video.end*1000)
+                    ]
+                })
+        for audio in audios:
+            timeline[1]["data"].append(
+                {
+                    "x": audio.name,
+                    "y": [
+                        int(video.start*1000),
+                        int(video.end*1000)
+                    ]
+                })
+        for subtitle in subtitles:
+            timeline[2]["data"].append(
+                {
+                    "x": subtitle.name,
+                    "y": [
+                        int(subtitle.start*1000),
+                        int(subtitle.end*1000)
+                    ]
+                })
+
+        return timeline
 
         
     #IMPORT
@@ -99,12 +130,12 @@ class Dali_movie():
 
     #TEXT
     def text(self, name, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
-        print(backgroundColor)
+        if self.export_mode != "timeline" : print(backgroundColor)
         if backgroundColor != None:
             text = TextClip(self._font_path, font_size=20, text=text, bg_color=backgroundColor, duration=duration, color=textColor).with_fps(15).with_position(position, relative=True)
             return Dali_clip(name, text, 0)
         
-        print("subtitle")
+        if self.export_mode != "timeline" : print("subtitle")
         text = TextClip(self._font_path, font_size=20, text=text, duration=duration, color=textColor).with_fps(20).with_position(position, relative=True)
         return Dali_clip(name, text, 0)
 
@@ -121,7 +152,6 @@ class Dali_movie():
             return self._add_ending_at(dali_clip.name, dali_clip.media, offset, reference.media)
         if mode == MODE.START and anchor_type == ANCHOR_TYPE.AT and reference:
             return self._add_starting_at(dali_clip.name, dali_clip.media, offset, reference.media)
-
         return False
 
     def _add_append(self, name, media):
@@ -204,7 +234,6 @@ class Dali_movie():
                 #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
-        print("place media")
         self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
     
     def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time):
@@ -223,20 +252,20 @@ class Dali_movie():
 
         if isinstance(media, TextClip):
             if media.fps > 15:
-                print("Is Subtitle")
-                print(media.fps)
+                if self.export_mode != "timeline" : print("Is Subtitle")
+                if self.export_mode != "timeline" : print(media.fps)
                 # Subtitle
                 return self._subtitle_track
             else:
-                print("Is Title")
-                print(media.fps)
+                if self.export_mode != "timeline" : print("Is Title")
+                if self.export_mode != "timeline" : print(media.fps)
                 # Title
                 return self._video_track
         elif isinstance(media, VideoClip):
-            print("Is Video")
+            if self.export_mode != "timeline" : print("Is Video")
             return self._video_track
         elif isinstance(media, AudioClip):
-            print("Is Audio")
+            if self.export_mode != "timeline" : print("Is Audio")
             return self._audio_track
         else:
             return False
