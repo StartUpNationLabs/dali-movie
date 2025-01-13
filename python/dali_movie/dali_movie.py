@@ -192,7 +192,7 @@ class Dali_movie():
                 #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap)
-        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip)
         start.finish()
 
     def _add_ending_before(self, name, media, offset, reference):
@@ -213,7 +213,7 @@ class Dali_movie():
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
 
-        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip)
 
     def _add_ending_at(self, name, media, offset, reference):
         return
@@ -237,16 +237,15 @@ class Dali_movie():
                 #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
-        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time)
+        self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip)
     
-    def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time):
+    def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip):
         if previous_dali_clip != None and previous_dali_clip.end > anchor_time:
             print(previous_dali_clip.end)
             print(anchor_time)
             print("NOT ENOUGH PLACE BEFORE")
             return False
         
-        #CLIP CAN BE PLACED
         added_dali_clip = Dali_clip(name, media, anchor_time)
         track.insert(index+1, added_dali_clip) 
 
@@ -323,7 +322,15 @@ class Dali_movie():
             else:
                 space = track[i].start
             if space > 0.1:
-                dali_clip = Dali_clip("blank", ColorClip((1920,1080) ,duration=space), previous_media.end)
+                dali_clip = None
+                if isinstance(track[i].media, TextClip):
+                    dali_clip = Dali_clip("blank", ColorClip((1080,720), color=(0, 0, 0, 0), duration=space), previous_media.end)
+                if isinstance(track[i].media, AudioClip):
+                    dali_clip = Dali_clip("blank", AudioClip(lambda t: [0] * 2, duration=space, fps=44100), previous_media.end)
+                if isinstance(track[i].media, VideoClip):
+                    dali_clip = Dali_clip("blank", ColorClip((1080,720) ,duration=space), previous_media.end)
+                else:
+                    print("Wrong type : " + str(type(track[i])))
                 result.append(dali_clip)    
             result.append(track[i])
         return result
