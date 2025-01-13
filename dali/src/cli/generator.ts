@@ -111,21 +111,29 @@ function addText(command: AddText): string {
 function cut(command: Cut): string {
     const start = command.name + " = ";
     switch (command.from) {
-        case "start":
-            return start + daliFunction("cut_start", `${command.mediaRef.$refText}, ${getTime(command.duration)}`);
-        case "end":
-            return start + daliFunction("cut_end", `${command.mediaRef.$refText}, ${getTime(command.duration)}`);
-        default:
-            return start + daliFunction("cut", `${command.mediaRef.$refText}, ${getTime(command.from)}, ${getTime(command.duration)}`);
+        case "start": {
+            const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(command.duration)}`;
+            return start + daliFunction("cut_start", params);
+        }
+        case "end": {
+            const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(command.duration)}`;
+            return start + daliFunction("cut_end", params);
+        }
+        default: {
+            const params = `${command.name}, ${command.mediaRef.$refText}, ${getTime(command.from)}, ${getTime(command.duration)}`;
+            return start + daliFunction("cut", params);
+        }
     }
 }
 
 function importAudio(command: LoadAudio): string {
-    return `${command.name} = ${daliFunction("importAudio", quoted(command.file))}`;
+    const params = `${command.name}, ${quoted(command.file)}`;
+    return `${command.name} = ${daliFunction("importAudio", params)}`;
 }
 
 function importVideo(command: LoadVideo): string {
-    return `${command.name} = ${daliFunction("importVideo", quoted(command.file))}`;
+    const params = `${command.name}, ${quoted(command.file)}`;
+    return `${command.name} = ${daliFunction("importVideo", params)}`;
 }
 
 function text(command: Text): string {
@@ -134,7 +142,7 @@ function text(command: Text): string {
 }
 
 function getTextParameters(command: Text): string {
-    let parameters = `${getTextContent(command.content)}, duration=${getTime(command.duration)}`;
+    let parameters = `${command.name}, ${getTextContent(command.content)}, duration=${getTime(command.duration)}`;
     if (command.backgroundColor) parameters += `, backgroundColor=${command.backgroundColor}`;
     if (command.textColor) parameters += `, textColor=${command.textColor}`;
     if (command.percentageFromLeft && command.percentageFromTop)
