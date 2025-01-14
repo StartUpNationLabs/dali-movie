@@ -43,14 +43,22 @@
       "dependsOn": ["build"],
       "options": {
         "buildTarget": "cli:build",
-        "runBuildTargetDependencies": false
+        "runBuildTargetDependencies": false,
+        "args": ""
+        
       },
       "configurations": {
         "development": {
-          "buildTarget": "cli:build:development"
+          "buildTarget": "cli:build:development",
+          "args": {
+            "file": ""
+          }
         },
         "production": {
-          "buildTarget": "cli:build:production"
+          "buildTarget": "cli:build:production",
+          "args": {
+            "file": ""
+          }
         }
       }
     }
