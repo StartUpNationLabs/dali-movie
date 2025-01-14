@@ -1,8 +1,21 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useDropzone} from "react-dropzone";
 import {Alert, Box, CircularProgress, List, ListItem, ListItemText, Typography} from "@mui/material";
 import axios from "axios";
+import {useEditorStore} from "./state";
+function sanitizeInput(inputString) {
+  /**
+   * Sanitizes the input string to ensure it only contains characters matching the regex:
+   * /[a-zA-Z0-9\-_\\/.]+/
+   *
+   * @param {string} inputString - The input string to be sanitized.
+   * @returns {string} A sanitized string containing only valid characters.
+   */
 
+  const pattern = /[a-zA-Z0-9\-_\\/.]+/g;
+  const matches = inputString.match(pattern);
+  return matches ? matches.join('') : '';
+}
 const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
     uploadUrl: string,
     maxFiles?: number,
@@ -11,6 +24,26 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null as any);
     const [uploadedFiles, setUploadedFiles] = useState([] as { name: string }[]);
+    const editor = useEditorStore((state) => state.editor);
+
+  useEffect(() => {
+    if (editor) {
+      // find the names of the files between quotes in the editor code if file is not in the code add a new line with the file name
+      const files = uploadedFiles.map((file) => file.name);
+      const code = editor.getValue();
+      // find the names of the files between quotes in the editor code
+      const regex = /"(.*?)"/g;
+      const matches = code.match(regex);
+      // find all the uploaded files that are not in the code
+      const newFiles = files.filter((file) => !matches?.includes(`"${file}"`));
+      // add the new files to the code
+      if (newFiles.length > 0) {
+        const newCode = newFiles.map((file) => `import video ${sanitizeInput(file)} "${file}"`).join("\n");
+        editor.setValue(`${code}\n${newCode}`);
+      }
+
+    }
+  }, [editor, uploadedFiles]);
     const handleFileUpload = async (files: File[]) => {
         const formData = new FormData();
         files.forEach((file) => formData.append("videos", file));

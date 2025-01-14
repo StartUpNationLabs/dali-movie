@@ -5,7 +5,7 @@ class TextWrapper():
     def __init__(self, font_path, name, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
         self.font_path=font_path
         self.name = name
-        self.text = text
+        self.text = text.strip('"')
         self.duration = duration
         self.backgroundColor = backgroundColor
         self.textColor = textColor
@@ -15,13 +15,11 @@ class TextWrapper():
 
     def getmovie(self):
         if self.backgroundColor != None:
-            text = TextClip(self.font_path, font_size=26, text=self.text, bg_color=self.backgroundColor, duration=self.duration, color=self.textColor).with_fps(15).with_position(self.position, relative=True)
-            rgb_color = tuple(int(255 * c) for c in to_rgb(self.backgroundColor))
-            color = ColorClip(size=(1280, 720), color=rgb_color, duration=self.duration)
-            text = text.with_position('center')
-            return CompositeVideoClip([color, text])
+            text = TextClip(self.font_path, font_size=70, text=self.text, bg_color=self.backgroundColor, duration=self.duration, color=self.textColor, size=(1280,720)).with_fps(15).with_position(self.position, relative=True)
+            return text
         
-        text = TextClip(self.font_path, font_size=26, text=self.text, duration=self.duration, color=self.textColor, size=(1280,720)).with_fps(20).with_position(self.position, relative=True)
+        text = TextClip(self.font_path, font_size=30, text=self.text, method='caption', duration=self.duration, color=self.textColor, size=(1280,720), stroke_color='black', stroke_width=3).with_fps(20).with_position(('center', 'bottom'))
+        text.vertical_align = "bottom"
         return text
 
     
