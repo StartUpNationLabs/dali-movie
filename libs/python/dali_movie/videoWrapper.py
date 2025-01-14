@@ -11,6 +11,7 @@ class VideoWrapper():
         videoCut = self.video.subclipped(start, end) 
         video = VideoWrapper(self.videoPath)
         video.video = videoCut
+        video.duration = videoCut.duration 
         return video
 
     def getmovie(self):
