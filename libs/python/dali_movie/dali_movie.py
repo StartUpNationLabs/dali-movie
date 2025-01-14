@@ -31,7 +31,7 @@ class Dali_movie():
     def export(self, output_filename = "./output.mp4"):
         
         if self.export_mode == "export":
-            if self.export_mode != "timeline" : print(self._video_track)
+            if self.export_mode != "timeline" : print(self)
 
             for clip in self._video_track:
                 clip.media = clip.media.getmovie()
@@ -52,12 +52,10 @@ class Dali_movie():
                 final_track[0] = final_track[0].with_audio(final_audio)
 
             if(len(subtitle_track) > 0):
-                print("Add subtitles")
                 final_track.append(concatenate_videoclips(subtitle_track, method="compose"))
                 final_track[1].layer = 1
 
             if(len(final_track) > 1):
-                print(final_track)
                 final_track[0] = CompositeVideoClip(final_track)
 
             final_track[0].write_videofile(output_filename, fps=24)
@@ -274,7 +272,7 @@ class Dali_movie():
     def _get_track(self, media):
 
         if isinstance(media, TextWrapper):
-            if media.fps > 15:
+            if media.backgroundColor == None:
                 if self.export_mode != "timeline" : print("Is Subtitle")
                 if self.export_mode != "timeline" : print(media.fps)
                 # Subtitle
