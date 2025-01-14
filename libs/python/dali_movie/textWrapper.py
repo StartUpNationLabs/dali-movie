@@ -15,11 +15,10 @@ class TextWrapper():
 
     def getmovie(self):
         if self.backgroundColor != None:
-            text = TextClip(self.font_path, font_size=70, text=self.text, bg_color=self.backgroundColor, duration=self.duration, color=self.textColor, size=(1280,720)).with_fps(15).with_position(self.position, relative=True)
+            text = TextClip(self.font_path, font_size=70, text=self.text, bg_color=self.backgroundColor, duration=self.duration, color=self.textColor, size=(1280,720))
             return text
         
-        text = TextClip(self.font_path, font_size=30, text=self.text, method='caption', duration=self.duration, color=self.textColor, size=(1280,720), stroke_color='black', stroke_width=3).with_fps(20).with_position(('center', 'bottom'))
-        text.vertical_align = "bottom"
+        text = TextClip(self.font_path, font_size=36, text=self.text, method='caption', duration=self.duration, color=self.textColor, size=(1280,720), stroke_color='black', stroke_width=3, vertical_align="bottom")
         return text
 
     
