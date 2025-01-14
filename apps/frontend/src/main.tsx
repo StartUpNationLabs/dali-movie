@@ -10,7 +10,6 @@ const root = ReactDOM.createRoot(
 );
 const queryClient = new QueryClient();
 
-
 root.render(
   <StrictMode>
     <CssBaseline/>
