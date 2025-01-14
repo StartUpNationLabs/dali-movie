@@ -51,8 +51,7 @@ const storage: StorageEngine = multer.diskStorage({
     cb(null, sessionDir); // Save files to the session-specific directory
   },
   filename: (req: Request, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
