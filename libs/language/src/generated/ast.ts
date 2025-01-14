@@ -11,7 +11,8 @@ export const DaliMovieTerminals = {
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
     TIME: /\d+((h\d+)?m\d+)?s/,
-    ID: /[a-zA-Z0-9\-_\\\/.]+/,
+    ID: /[a-zA-Z0-9\-_]+/,
+    FILENAME: /(("([\s\S]*?"))|('([\s\S]*?')))/,
     WS: /\s+/,
     HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/,
     PERCENTAGE: /([0-9]{1,2})/,
@@ -21,7 +22,6 @@ export const DaliMovieTerminals = {
 export type DaliMovieTerminalNames = keyof typeof DaliMovieTerminals;
 
 export type DaliMovieKeywordNames = 
-    | "\""
     | ","
     | "100"
     | "BEIGE"
