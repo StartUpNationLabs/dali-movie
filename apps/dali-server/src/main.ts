@@ -1,32 +1,33 @@
-import express, {Request, Response} from "express";
-import multer, {StorageEngine} from "multer";
-import cors from "cors";
-import path from "path";
-import fs from "fs";
-import {spawn} from "child_process";
+import express, { Request, Response } from 'express';
+import multer, { StorageEngine } from 'multer';
+import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
+import { spawn } from 'child_process';
 
-import {EmptyFileSystem, LangiumDocument} from "langium";
-import {parseHelper} from "langium/test";
-import {createDaliMovieServices, Script} from "@dali-movie/language";
-import {generateMoviePython} from "@dali-movie/generator";
-import {dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import { EmptyFileSystem, LangiumDocument } from 'langium';
+import { parseHelper } from 'langium/test';
+import { createDaliMovieServices, Script } from '@dali-movie/language';
+import { generateMovieFromServerPython } from '@dali-movie/generator';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 const PORT = 5000;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BASE_PATH = __dirname;
+const FONT_PATH = path.join(BASE_PATH, 'src', 'assets', 'arial.TTF');
+
 // Enable CORS for frontend communication
 app.use(cors());
 app.use(express.json()); // Parse JSON payloads
-app.use(express.urlencoded({extended: true})); // Parse URL-encoded payloads
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded payloads
 
 // Directory to store uploaded files
-const uploadDir = path.join(BASE_PATH, "uploads");
+const uploadDir = path.join(BASE_PATH, 'uploads');
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir,
-    {recursive: true});
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Create a directory for each session ID if it doesn't exist
@@ -43,50 +44,50 @@ const storage: StorageEngine = multer.diskStorage({
   destination: (req: Request, file, cb) => {
     const sessionId = req.params.sessionId;
     if (!sessionId) {
-      return cb(new Error("Session ID is required"), "");
+      return cb(new Error('Session ID is required'), '');
     }
 
     const sessionDir = ensureSessionDir(sessionId);
     cb(null, sessionDir); // Save files to the session-specific directory
   },
   filename: (req: Request, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
   },
 });
 
 const upload = multer({
   storage,
-  limits: {fileSize: 500 * 1024 * 1024}, // 500 MB limit per file
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB limit per file
   fileFilter: (req: Request, file, cb) => {
     console.log(
-      "File MIME Type:",
+      'File MIME Type:',
       file.mimetype,
-      "File Name:",
+      'File Name:',
       file.originalname
     );
-    const allowedExtensions = [".mp4", ".avi", ".mov", ".mkv"];
+    const allowedExtensions = ['.mp4', '.avi', '.mov', '.mkv'];
 
     const fileExtension = path.extname(file.originalname).toLowerCase();
     if (allowedExtensions.includes(fileExtension)) {
       cb(null, true);
     } else {
-      cb(new Error("Unsupported file type. Only video files are allowed."));
+      cb(new Error('Unsupported file type. Only video files are allowed.'));
     }
   },
 });
 
 // API route to upload videos
 app.post(
-  "/upload-videos/:sessionId",
-  upload.array("videos", 10),
+  '/upload-videos/:sessionId',
+  upload.array('videos', 10),
   (req: Request, res: Response) => {
     try {
       const sessionId = req.params.sessionId;
       if (!sessionId) {
         res
           .status(400)
-          .json({success: false, message: "Session ID is required"});
+          .json({ success: false, message: 'Session ID is required' });
         return;
       }
 
@@ -96,21 +97,20 @@ app.post(
         filename,
         url: `http://localhost:${PORT}/uploads/${sessionId}/${filename}`,
       }));
-      res.status(200).json({success: true, files});
-    } catch (error: any) {
-    }
-    res.status(500).json({success: false, message: "error"});
+      res.status(200).json({ success: true, files });
+    } catch (error: any) {}
+    res.status(500).json({ success: false, message: 'error' });
   }
 );
 
 // API route to process timeline data
-app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
+app.post('/:sessionId/timeline', async (req: Request, res: Response) => {
   try {
     const sessionId = req.params.sessionId;
     if (!sessionId) {
       res
         .status(400)
-        .json({success: false, message: "Session ID is required"});
+        .json({ success: false, message: 'Session ID is required' });
       return;
     }
 
@@ -119,54 +119,55 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
 
     const requestBody = req.body;
     const daliCode = requestBody.langium;
-    console.log("Code : ", daliCode);
+    console.log('Code : ', daliCode);
 
     const document = await parse(daliCode);
-    updateFilePath(document, "out/uploads/" + sessionId + "/");
+    updateFilePath(document, sessionId);
     const model = document.parseResult.value;
 
-    console.log("Code : ", model);
-    const pythonScriptPath = generateMoviePython(
+    console.log('Code : ', model);
+    const pythonScriptPath = generateMovieFromServerPython(
       model,
-      BASE_PATH + "/python",
-      BASE_PATH + "/python/" + sessionId
+      BASE_PATH + '/python/' + sessionId,
+      'response.py',
+      FONT_PATH.replace(/\\/g, '\\\\')
     );
 
     const command = `${
-      process.env.PYTHON_PATH || "python"
+      process.env.PYTHON_PATH || 'python'
     } ${pythonScriptPath}`;
-    const subprocess = spawn(command, [], {
+    const subprocess = spawn(command, ['timeline'], {
       shell: true,
       env: {
         ...process.env, // Conservez les variables d'environnement existantes
-        PYTHONUNBUFFERED: "1", // Pour éviter les problèmes de buffering
+        PYTHONUNBUFFERED: '1', // Pour éviter les problèmes de buffering
         PYTHONPATH:
-          (process.env["PYTHON_PATH"] || "") +
-          path.join(BASE_PATH, "../../libs/python/"), // Ajoutez le chemin du script Python
+          (process.env['PYTHON_PATH'] || '') +
+          path.join(BASE_PATH, '../../libs/python/'), // Ajoutez le chemin du script Python
       },
     });
-    let output = "";
-    let errorOutput = "";
+    let output = '';
+    let errorOutput = '';
 
-    subprocess.stdout.on("data", (data: Buffer) => {
+    subprocess.stdout.on('data', (data: Buffer) => {
       output += data.toString();
     });
 
-    subprocess.stderr.on("data", (data: Buffer) => {
+    subprocess.stderr.on('data', (data: Buffer) => {
       errorOutput += data.toString();
     });
 
-    subprocess.on("close", (code: number) => {
+    subprocess.on('close', (code: number) => {
       if (code !== 0) {
         console.error(`Subprocess exited with code ${code}`);
         res.status(500).json({
           success: false,
-          message: "Error executing Python script",
+          message: 'Error executing Python script',
           error: errorOutput,
         });
       } else {
         // Use a regular expression to extract the desired portion
-        const parts = output.split("-----");
+        const parts = output.split('-----');
         let lastPart = parts[parts.length - 1].trim();
         if (lastPart) {
           res.status(200).json({
@@ -179,30 +180,30 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
             success: false,
             timeline: [
               {
-                name: "Video",
+                name: 'Video',
                 data: [],
               },
               {
-                name: "Sound",
+                name: 'Sound',
                 data: [],
               },
               {
-                name: "Subtitles",
+                name: 'Subtitles',
                 data: [],
               },
             ],
-            errors: ["Failed to parse output"],
+            errors: ['Failed to parse output'],
           });
         }
       }
     });
   } catch (error: any) {
-    res.status(500).json({success: false, message: error.message});
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 // API route to serve uploaded files (optional)
-app.use("/uploads", express.static(uploadDir));
+app.use('/uploads', express.static(uploadDir));
 
 // Start the server
 app.listen(PORT, () => {
@@ -216,21 +217,25 @@ function updateFilePath(
 ): void {
   const rootNode = document.parseResult?.value;
   if (!rootNode) {
-    console.error("Failed to parse the document.");
+    console.error('Failed to parse the document.');
     return;
   }
 
   document.parseResult.value.commands.forEach((command) => {
     switch (command.$type) {
-      case "LoadVideo":
-      case "LoadAudio":
-        command.file = prefix + command.file;
+      case 'LoadVideo':
+      case 'LoadAudio':
+        command.file = path
+          .join(BASE_PATH, 'uploads', prefix, command.file)
+          .replace(/\\/g, '\\\\');
     }
   });
 
   const exportValue = document.parseResult.value.export;
   if (exportValue) {
-    exportValue.file = prefix + exportValue.file;
+    exportValue.file = path
+      .join(BASE_PATH, 'uploads', prefix, exportValue.file)
+      .replace(/\\/g, '\\\\');
   }
 }
 
