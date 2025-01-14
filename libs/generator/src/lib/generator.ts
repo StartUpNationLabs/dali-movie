@@ -18,21 +18,31 @@ export function generateMoviePython(
   model: Script,
   filePath: string,
   destination: string | undefined,
-  fontPath: string | undefined = ""
+  fontPath: string | undefined = ''
 ): string {
   const data = extractDestinationAndName(filePath, destination);
   const generatedFilePath = `${path.join(data.destination, data.name)}.py`;
-  return generateMoviePythonShell(model, data.destination, generatedFilePath, fontPath);
+  return generateMoviePythonShell(
+    model,
+    data.destination,
+    generatedFilePath,
+    fontPath
+  );
 }
 
 export function generateMovieFromServerPython(
   model: Script,
   destination: string,
   filename: string,
-  fontPath: string | undefined = ""
+  fontPath: string | undefined = ''
 ): string {
   const generatedFilePath = path.join(destination, filename);
-  return generateMoviePythonShell(model, destination, generatedFilePath, fontPath);
+  return generateMoviePythonShell(
+    model,
+    destination,
+    generatedFilePath,
+    fontPath
+  );
 }
 
 function generateMoviePythonShell(

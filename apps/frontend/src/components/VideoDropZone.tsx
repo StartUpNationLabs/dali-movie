@@ -1,22 +1,22 @@
-import {useCallback, useEffect, useState} from "react";
-import {useDropzone} from "react-dropzone";
-import {Alert, Box, CircularProgress, List, ListItem, ListItemText, Typography} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { Alert, Box, CircularProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
 import axios from "axios";
-import {useEditorStore} from "./state";
-function sanitizeInput(inputString) {
-  /**
-   * Sanitizes the input string to ensure it only contains characters matching the regex:
-   * /[a-zA-Z0-9\-_\\/.]+/
-   *
-   * @param {string} inputString - The input string to be sanitized.
-   * @returns {string} A sanitized string containing only valid characters.
-   */
+import { useEditorStore } from "./state";
+function sanitizeInput(inputString: string) {
+    /**
+     * Sanitizes the input string to ensure it only contains characters matching the regex:
+     * /[a-zA-Z0-9\-_\\/.]+/
+     *
+     * @param {string} inputString - The input string to be sanitized.
+     * @returns {string} A sanitized string containing only valid characters.
+     */
 
-  const pattern = /[a-zA-Z0-9\-_\\/.]+/g;
-  const matches = inputString.match(pattern);
-  return matches ? matches.join('') : '';
+    const pattern = /[a-zA-Z0-9\-_\\/.]+/g;
+    const matches = inputString.match(pattern);
+    return (matches ? matches.join('') : '').replaceAll(/[\/\\\.]/g, "_");
 }
-const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
+const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
     uploadUrl: string,
     maxFiles?: number,
     maxSize?: number
@@ -26,24 +26,35 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
     const [uploadedFiles, setUploadedFiles] = useState([] as { name: string }[]);
     const editor = useEditorStore((state) => state.editor);
 
-  useEffect(() => {
-    if (editor) {
-      // find the names of the files between quotes in the editor code if file is not in the code add a new line with the file name
-      const files = uploadedFiles.map((file) => file.name);
-      const code = editor.getValue();
-      // find the names of the files between quotes in the editor code
-      const regex = /"(.*?)"/g;
-      const matches = code.match(regex);
-      // find all the uploaded files that are not in the code
-      const newFiles = files.filter((file) => !matches?.includes(`"${file}"`));
-      // add the new files to the code
-      if (newFiles.length > 0) {
-        const newCode = newFiles.map((file) => `import video ${sanitizeInput(file)} "${file}"`).join("\n");
-        editor.setValue(`${code}\n${newCode}`);
-      }
+    useEffect(() => {
+        if (editor) {
+            // Extract file names from uploaded files
+            const files = uploadedFiles.map((file) => file.name);
+            const code = editor.getValue();
 
-    }
-  }, [editor, uploadedFiles]);
+            // Regex to match import statements and capture file names
+            const regex = /import (video|audio) [a-zA-Z0-9\-_]+ ['"]([^'"]+)['"]/g;
+            const matches: string[] = [];
+            let match;
+
+            // Extract all file names from the code
+            while ((match = regex.exec(code)) !== null) {
+                matches.push(match[2]); // Add the captured file name (second group)
+            }
+
+            // Find all uploaded files that are not in the code
+            const newFiles = files.filter((file) => !matches.includes(file));
+
+            // Add the new files to the code
+            if (newFiles.length > 0) {
+                const newCode = newFiles
+                    .map((file) => `import video ${sanitizeInput(file)} "${file}"`)
+                    .join("\n");
+                editor.setValue(`${code}\n${newCode}`);
+            }
+        }
+    }, [editor, uploadedFiles]);
+
     const handleFileUpload = async (files: File[]) => {
         const formData = new FormData();
         files.forEach((file) => formData.append("videos", file));
@@ -61,11 +72,11 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
             setUploadedFiles((prevFiles: {
                 name: string
             }[]) => [
-                ...prevFiles,
-                ...(response.data.files.map((file: {
-                    filename: string
-                }) => ({name: file.filename}))),
-            ]);
+                    ...prevFiles,
+                    ...(response.data.files.map((file: {
+                        filename: string
+                    }) => ({ name: file.filename }))),
+                ]);
         } catch (err) {
             setError("Some files failed to upload. Please try again.");
         } finally {
@@ -74,7 +85,7 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
     };
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
-        handleFileUpload(acceptedFiles).then(r => {});
+        handleFileUpload(acceptedFiles).then(r => { });
     }, []);
 
     const {
@@ -84,7 +95,7 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
         isDragReject,
     } = useDropzone({
         onDrop,
-        accept: {"video/*": []}, // Allow video file types
+        accept: { "video/*": [] }, // Allow video file types
         maxFiles,
         maxSize,
     });
@@ -122,7 +133,7 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
 
             {uploading && (
                 <Box mt={2}>
-                    <CircularProgress/>
+                    <CircularProgress />
                     <Typography variant="body2" color="text.secondary">
                         Uploading...
                     </Typography>
@@ -130,7 +141,7 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
             )}
 
             {error && (
-                <Alert severity="error" sx={{mt: 2}}>
+                <Alert severity="error" sx={{ mt: 2 }}>
                     {error}
                 </Alert>
             )}
@@ -148,7 +159,7 @@ const VideoDropzone = ({uploadUrl, maxFiles = 5, maxSize = 524288000}: {
                     }>
                         {uploadedFiles.map((file, index) => (
                             <ListItem key={index}>
-                                <ListItemText primary={file.name}/>
+                                <ListItemText primary={file.name} />
                             </ListItem>
                         ))}
                     </List>

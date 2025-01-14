@@ -225,7 +225,12 @@ function updateFilePath(
       case 'LoadVideo':
       case 'LoadAudio':
         command.file = path
-          .join(BASE_PATH, 'uploads', prefix, command.file)
+          .join(
+            BASE_PATH,
+            'uploads',
+            prefix,
+            command.file.substring(1, command.file.length - 1)
+          )
           .replace(/\\/g, '\\\\');
     }
   });
@@ -233,7 +238,12 @@ function updateFilePath(
   const exportValue = document.parseResult.value.export;
   if (exportValue) {
     exportValue.file = path
-      .join(BASE_PATH, 'uploads', prefix, exportValue.file)
+      .join(
+        BASE_PATH,
+        'uploads',
+        prefix,
+        exportValue.file.substring(1, exportValue.file.length - 1)
+      )
       .replace(/\\/g, '\\\\');
   }
 }
