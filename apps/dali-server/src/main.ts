@@ -1,29 +1,32 @@
-import express, { Request, Response } from "express";
-import multer, { StorageEngine } from "multer";
+import express, {Request, Response} from "express";
+import multer, {StorageEngine} from "multer";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
 import {spawn} from "child_process";
 
-import { EmptyFileSystem, LangiumDocument } from "langium";
-import { parseHelper } from "langium/test";
+import {EmptyFileSystem, LangiumDocument} from "langium";
+import {parseHelper} from "langium/test";
 import {createDaliMovieServices, Script} from "@dali-movie/language";
 import {generateMoviePython} from "@dali-movie/generator";
+import {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 const app = express();
 const PORT = 5000;
-const BASE_PATH = "./dist/apps/dali-server";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const BASE_PATH = __dirname;
 // Enable CORS for frontend communication
 app.use(cors());
 app.use(express.json()); // Parse JSON payloads
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded payloads
+app.use(express.urlencoded({extended: true})); // Parse URL-encoded payloads
 
 // Directory to store uploaded files
 const uploadDir = path.join(BASE_PATH, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir,
-    { recursive: true });
+    {recursive: true});
 }
 
 // Create a directory for each session ID if it doesn't exist
@@ -54,7 +57,7 @@ const storage: StorageEngine = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB limit per file
+  limits: {fileSize: 500 * 1024 * 1024}, // 500 MB limit per file
   fileFilter: (req: Request, file, cb) => {
     console.log(
       "File MIME Type:",
@@ -83,7 +86,7 @@ app.post(
       if (!sessionId) {
         res
           .status(400)
-          .json({ success: false, message: "Session ID is required" });
+          .json({success: false, message: "Session ID is required"});
         return;
       }
 
@@ -93,9 +96,10 @@ app.post(
         filename,
         url: `http://localhost:${PORT}/uploads/${sessionId}/${filename}`,
       }));
-      res.status(200).json({ success: true, files });
-    } catch (error: any) {}
-    res.status(500).json({ success: false, message: "error" });
+      res.status(200).json({success: true, files});
+    } catch (error: any) {
+    }
+    res.status(500).json({success: false, message: "error"});
   }
 );
 
@@ -106,7 +110,7 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
     if (!sessionId) {
       res
         .status(400)
-        .json({ success: false, message: "Session ID is required" });
+        .json({success: false, message: "Session ID is required"});
       return;
     }
 
@@ -193,7 +197,7 @@ app.post("/:sessionId/timeline", async (req: Request, res: Response) => {
       }
     });
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({success: false, message: error.message});
   }
 });
 
