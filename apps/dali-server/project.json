@@ -7,23 +7,27 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/dali-server",
-        "format": ["esm"],
+        "format": [
+          "esm"
+        ],
         "bundle": true,
         "main": "apps/dali-server/src/main.ts",
         "tsConfig": "apps/dali-server/tsconfig.app.json",
-        "assets": ["apps/dali-server/src/assets"],
+        "assets": [
+          "apps/dali-server/src/assets/**/*"
+        ],
         "generatePackageJson": false,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
-            ".js": ".cjs",
-
-
+            ".js": ".cjs"
           }
         }
       },
@@ -39,7 +43,9 @@
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "options": {
         "buildTarget": "dali-server:build",
         "runBuildTargetDependencies": false
