@@ -51,8 +51,7 @@ const storage: StorageEngine = multer.diskStorage({
     cb(null, sessionDir); // Save files to the session-specific directory
   },
   filename: (req: Request, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -226,7 +225,12 @@ function updateFilePath(
       case 'LoadVideo':
       case 'LoadAudio':
         command.file = path
-          .join(BASE_PATH, 'uploads', prefix, command.file)
+          .join(
+            BASE_PATH,
+            'uploads',
+            prefix,
+            command.file.substring(1, command.file.length - 1)
+          )
           .replace(/\\/g, '\\\\');
     }
   });
@@ -234,7 +238,12 @@ function updateFilePath(
   const exportValue = document.parseResult.value.export;
   if (exportValue) {
     exportValue.file = path
-      .join(BASE_PATH, 'uploads', prefix, exportValue.file)
+      .join(
+        BASE_PATH,
+        'uploads',
+        prefix,
+        exportValue.file.substring(1, exportValue.file.length - 1)
+      )
       .replace(/\\/g, '\\\\');
   }
 }

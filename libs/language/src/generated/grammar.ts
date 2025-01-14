@@ -1043,7 +1043,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@22"
+              "$ref": "#/rules@23"
             },
             "arguments": []
           },
@@ -1146,7 +1146,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@23"
+              "$ref": "#/rules@24"
             },
             "arguments": []
           },
@@ -1168,29 +1168,16 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
       "name": "QuotedFileName",
       "fragment": true,
       "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "\\""
+        "$type": "Assignment",
+        "feature": "file",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@21"
           },
-          {
-            "$type": "Assignment",
-            "feature": "file",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@20"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": "\\""
-          }
-        ]
+          "arguments": []
+        }
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -1209,7 +1196,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@25"
+            "$ref": "#/rules@26"
           },
           "arguments": []
         }
@@ -1255,7 +1242,62 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
       "name": "ID",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/[a-zA-Z0-9\\\\-_\\\\\\\\\\\\/.]+/"
+        "regex": "/[a-zA-Z0-9\\\\-_]+/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "FILENAME",
+      "definition": {
+        "$type": "TerminalAlternatives",
+        "elements": [
+          {
+            "$type": "TerminalGroup",
+            "elements": [
+              {
+                "$type": "CharacterRange",
+                "left": {
+                  "$type": "Keyword",
+                  "value": "\\""
+                }
+              },
+              {
+                "$type": "UntilToken",
+                "terminal": {
+                  "$type": "CharacterRange",
+                  "left": {
+                    "$type": "Keyword",
+                    "value": "\\""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "$type": "TerminalGroup",
+            "elements": [
+              {
+                "$type": "CharacterRange",
+                "left": {
+                  "$type": "Keyword",
+                  "value": "'"
+                }
+              },
+              {
+                "$type": "UntilToken",
+                "terminal": {
+                  "$type": "CharacterRange",
+                  "left": {
+                    "$type": "Keyword",
+                    "value": "'"
+                  }
+                }
+              }
+            ]
+          }
+        ]
       },
       "fragment": false,
       "hidden": false

@@ -71,7 +71,7 @@ Percentage returns number:
 ;
 
 fragment QuotedFileName:
-    '"' file=ID '"'
+    file=FILENAME
 ;
 
 fragment QuotedContent:
@@ -83,7 +83,8 @@ hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 
 terminal TIME: /\d+((h\d+)?m\d+)?s/;
-terminal ID: /[a-zA-Z0-9\-_\\\/.]+/;
+terminal ID: /[a-zA-Z0-9\-_]+/;
+terminal FILENAME: '"' -> '"' | "'" -> "'";
 
 hidden terminal WS: /\s+/;
 
