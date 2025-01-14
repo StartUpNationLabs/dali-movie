@@ -1,4 +1,5 @@
 import {create} from 'zustand'
+import * as monaco from 'monaco-editor'
 
 export interface CodeStore {
     code: string
@@ -32,6 +33,21 @@ export const useSessionStore = create<SessionStore>((set) => ({
             setSession: (session) => set({session}),
             resetSession: () => set({session: ''})
 
+        }
+    )
+)
+
+interface EditorStore {
+  editor:  monaco.editor
+  setEditor: (editor: any) => void
+  resetEditor: () => void
+}
+
+
+export const useEditorStore = create<EditorStore>((set) => ({
+            editor: null,
+            setEditor: (editor) => set({editor}),
+            resetEditor: () => set({editor: null})
         }
     )
 )
