@@ -12,6 +12,7 @@ class TextWrapper():
         self.position = position
         self.fps=24
         self.size=(1280, 720)
+        self.is_over = True
 
     def getmovie(self):
         if self.backgroundColor != None:

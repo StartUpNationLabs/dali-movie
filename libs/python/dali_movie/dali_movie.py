@@ -62,7 +62,7 @@ class Dali_movie():
             return output_filename
         else:
             timeline = self.print_timeline(self._video_track, self._audio_track, self._subtitle_track)
-            print("-----"+str(timeline))
+            print("-----\n"+str(timeline))
 
     def print_timeline(self, videos, audios, subtitles):
         timeline = [
@@ -94,8 +94,8 @@ class Dali_movie():
                 {
                     "x": audio.name,
                     "y": [
-                        int(video.start*1000),
-                        int(video.end*1000)
+                        int(audio.start*1000),
+                        int(audio.end*1000)
                     ]
                 })
         for subtitle in subtitles:
@@ -178,6 +178,8 @@ class Dali_movie():
     def _add_append(self, name, media):
         start = Perf("add append")
         track = self._get_track(media)
+        if track == self._subtitle_track:
+            track = self._video_track
         if track==None : return False
         
         if(len(track)) == 0:
@@ -200,7 +202,7 @@ class Dali_movie():
             #MOVE TOGETHER
             #print("Is a dependency")
             self._get_reference(reference).add_dependency(media)
-
+        
         index, previous_dali_clip, following_dali_clip = self._get_clip(track, anchor_time)  
         if previous_dali_clip != None:
             if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
@@ -290,14 +292,13 @@ class Dali_movie():
             return self._audio_track
         else:
             return False
-        return True
     
     def _get_clip(self, track, anchor_time):
         try:
             if len(track) == 0:
-                return -1, None, None
+                return 0, None, None
             if(track[0].start >= anchor_time):
-                return -1, None, track[0]
+                return 0, None, track[0]
             for i in range(len(track)):
                 if track[i+1].start >= anchor_time:
                     return i, track[i], track[i+1]
@@ -306,12 +307,9 @@ class Dali_movie():
         return len(track)-1, track[-1], None
 
     def _get_reference(self, reference):
-        test1 = Perf("get_reference")
         reference_track = self._get_track(reference)
         for i in range(len(reference_track)):
-                if isinstance(reference_track[i].media, type(reference)) and reference_track[i].media == reference:
-                    print(type(reference_track[i].media))
-                    test1.finish()
+                if reference_track[i].media == reference:
                     return reference_track[i]
         return None
     
