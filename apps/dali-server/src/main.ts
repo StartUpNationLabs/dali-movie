@@ -65,7 +65,7 @@ const upload = multer({
       'File Name:',
       file.originalname
     );
-    const allowedExtensions = ['.mp4', '.avi', '.mov', '.mkv'];
+    const allowedExtensions = ['.mp4', '.avi', '.mov', '.mkv', '.mp3'];
 
     const fileExtension = path.extname(file.originalname).toLowerCase();
     if (allowedExtensions.includes(fileExtension)) {
