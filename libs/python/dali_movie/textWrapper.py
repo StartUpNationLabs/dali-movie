@@ -12,12 +12,14 @@ class TextWrapper():
         self.position = position
         self.fps=24
         self.size=(1280, 720)
+        self.is_over = True
 
-    def getmovie(self):
-        if self.backgroundColor != None:
+    def getmovie(self, clip_type="subtitle"):
+        if clip_type=="video":
+            #title
             text = TextClip(self.font_path, font_size=70, text=self.text, bg_color=self.backgroundColor, duration=self.duration, color=self.textColor, size=(1280,720))
             return text
-        
+        #subtitle
         text = TextClip(self.font_path, font_size=36, text=self.text, method='caption', duration=self.duration, color=self.textColor, size=(1280,720), stroke_color='black', stroke_width=3, vertical_align="bottom")
         return text
 
