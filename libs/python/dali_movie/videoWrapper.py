@@ -14,7 +14,7 @@ class VideoWrapper():
         video.duration = videoCut.duration 
         return video
 
-    def getmovie(self):
+    def getmovie(self, clip_type="video"):
         return self.video
 
     

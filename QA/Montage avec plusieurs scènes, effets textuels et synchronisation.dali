@@ -1,0 +1,25 @@
+import video scene1 "video.mp4"
+import video scene2 "video.mp4"
+import video scene3 "video.mp4"
+import audio music "audio.mp3"
+import audio sfx "audio.mp3"
+
+cut scene1 from 0s to 3s named introCut
+cut scene2 from 1s to 3s named interviewCut
+cut scene3 from start for 4s named outroCut
+
+add introCut 
+add music
+
+text ["Welcome to the Documentary"] for 5s named titleText
+add titleText 
+
+add interviewCut starting after titleText
+add sfx starting after introCut 
+add outroCut starting after interviewCut
+
+text ["Interview with John Doe"] for 11s named subtitleInterview
+add subtitleInterview starting after introCut
+
+text ["Thank you for watching!"] for 7s named outroText
+add outroText starting after outroCut

@@ -1,0 +1,14 @@
+import video clip1 "video.mp4"
+import video clip2 "video.mp4"
+import audio bgMusic "audio.mp3"
+
+cut clip1 from start for 4s named introScene
+cut clip2 from 1s to 2s named transitionScene
+
+add introScene
+add transitionScene starting after introScene
+
+text ["Transitioning..."] for 3s named transitionText
+add transitionText starting after introScene
+
+add bgMusic starting at introScene
