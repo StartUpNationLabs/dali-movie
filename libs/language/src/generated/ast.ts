@@ -11,11 +11,11 @@ export const DaliMovieTerminals = {
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
     TIME: /\d+((h\d+)?m\d+)?s/,
+    PERCENTAGE: /([0-9]{1,2})/,
     ID: /[a-zA-Z0-9\-_]+/,
     FILENAME: /(("([\s\S]*?"))|('([\s\S]*?')))/,
     WS: /\s+/,
     HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/,
-    PERCENTAGE: /([0-9]{1,2})/,
     FreeTextInBrackets: /(\[([\s\S]*?\]))/,
 };
 
@@ -124,11 +124,15 @@ export function isAddMedia(item: unknown): item is AddMedia {
 export interface AddText extends AstNode {
     readonly $container: Script;
     readonly $type: 'AddText';
+    backgroundColor?: Color;
     content: string;
     duration: string;
     mode?: EndingRule | StartingRule;
     name?: string;
+    percentageFromLeft?: Percentage;
+    percentageFromTop?: Percentage;
     referential?: Reference<Referentials>;
+    textColor?: Color;
 }
 
 export const AddText = 'AddText';
@@ -323,11 +327,15 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
                 return {
                     name: AddText,
                     properties: [
+                        { name: 'backgroundColor' },
                         { name: 'content' },
                         { name: 'duration' },
                         { name: 'mode' },
                         { name: 'name' },
-                        { name: 'referential' }
+                        { name: 'percentageFromLeft' },
+                        { name: 'percentageFromTop' },
+                        { name: 'referential' },
+                        { name: 'textColor' }
                     ]
                 };
             }

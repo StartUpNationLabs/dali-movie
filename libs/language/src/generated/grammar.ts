@@ -131,7 +131,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -173,7 +173,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -216,7 +216,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@20"
+                  "$ref": "#/rules@21"
                 },
                 "arguments": []
               },
@@ -303,7 +303,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -443,7 +443,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@20"
+                "$ref": "#/rules@21"
               },
               "arguments": []
             }
@@ -479,7 +479,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@20"
+                  "$ref": "#/rules@21"
                 },
                 "arguments": []
               },
@@ -591,7 +591,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@20"
+                          "$ref": "#/rules@21"
                         },
                         "arguments": []
                       },
@@ -627,7 +627,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@20"
+                          "$ref": "#/rules@21"
                         },
                         "arguments": []
                       },
@@ -682,6 +682,88 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             }
           },
           {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "color"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "textColor",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@13"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "position"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "percentageFromLeft",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@14"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "percentageFromTop",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@14"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "background"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "backgroundColor",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@13"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
             "$type": "Alternatives",
             "elements": [
               {
@@ -711,7 +793,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@20"
+                          "$ref": "#/rules@21"
                         },
                         "arguments": []
                       },
@@ -747,7 +829,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@20"
+                          "$ref": "#/rules@21"
                         },
                         "arguments": []
                       },
@@ -773,7 +855,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@20"
+                    "$ref": "#/rules@21"
                   },
                   "arguments": []
                 }
@@ -1043,7 +1125,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@23"
+              "$ref": "#/rules@24"
             },
             "arguments": []
           },
@@ -1146,7 +1228,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@24"
+              "$ref": "#/rules@20"
             },
             "arguments": []
           },
@@ -1174,7 +1256,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@21"
+            "$ref": "#/rules@22"
           },
           "arguments": []
         }
@@ -1233,6 +1315,16 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
       "definition": {
         "$type": "RegexToken",
         "regex": "/\\\\d+((h\\\\d+)?m\\\\d+)?s/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "PERCENTAGE",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/([0-9]{1,2})/"
       },
       "fragment": false,
       "hidden": false
@@ -1318,16 +1410,6 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
       "definition": {
         "$type": "RegexToken",
         "regex": "/#?([0-9a-f]{6}|[0-9a-f]{3})/"
-      },
-      "fragment": false,
-      "hidden": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "PERCENTAGE",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/([0-9]{1,2})/"
       },
       "fragment": false,
       "hidden": false

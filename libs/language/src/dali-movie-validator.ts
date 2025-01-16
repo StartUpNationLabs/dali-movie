@@ -22,6 +22,7 @@ export function registerValidationChecks(services: DaliMovieServices) {
       validator.validatorScriptPreventEmptyFilename,
       validator.validateAllTimeFormat,
       validator.validateIllegalIdReferences,
+      validator.validateQuotedFilename
     ],
   };
   registry.register(checks, validator);
@@ -279,5 +280,39 @@ export class DaliMovieValidator {
     }
 
     return parseInt(time.substring(index, time.length - 1)) <= 59;
+  }
+
+  validateQuotedFilename(script: Script, accept: ValidationAcceptor) {
+    const regex = /[a-zA-Z0-9_\-\/\\. ]+\.[a-zA-Z0-9]+/;
+
+    script.commands.forEach((command) => {
+      if (command.$type === "LoadAudio" || command.$type === "LoadVideo") {
+        let file = (command as any).file;
+        if (!regex.test(file.substring(1, file.length - 1))) {
+          accept(
+            "error",
+            "The filepath of the file is invalid. It must be of format 'path_to_file.file_extension'.",
+            {
+              node: command,
+              property: "file",
+            }
+          );
+        }
+      }
+    });
+
+    if (script.export) {
+      const filename = script.export.file;
+      if (!regex.test(filename.substring(1, filename.length - 1))) {
+        accept(
+          "error",
+          "The filepath of the file is invalid. Please enter a valid filepath.",
+          {
+            node: script,
+            property: "export",
+          }
+        );
+      }
+    }
   }
 }

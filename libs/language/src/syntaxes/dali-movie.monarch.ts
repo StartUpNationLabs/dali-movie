@@ -11,10 +11,10 @@ export default {
     tokenizer: {
         initial: [
             { regex: /\d+((h\d+)?m\d+)?s/, action: {"token":"TIME"} },
+            { regex: /([0-9]{1,2})/, action: {"token":"PERCENTAGE"} },
             { regex: /[a-zA-Z0-9\-_]+/, action: { cases: { '@keywords': {"token":"keyword"}, '@default': {"token":"ID"} }} },
             { regex: /(("([\s\S]*?"))|('([\s\S]*?')))/, action: {"token":"FILENAME"} },
             { regex: /#?([0-9a-f]{6}|[0-9a-f]{3})/, action: { cases: { '@keywords': {"token":"keyword"}, '@default': {"token":"HEX_COLOR"} }} },
-            { regex: /([0-9]{1,2})/, action: {"token":"PERCENTAGE"} },
             { regex: /[0-9]+/, action: {"token":"number"} },
             { regex: /(\[([\s\S]*?\]))/, action: {"token":"FreeTextInBrackets"} },
             { include: '@whitespace' },
