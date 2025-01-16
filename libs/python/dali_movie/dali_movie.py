@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 
 from moviepy import (ColorClip, VideoFileClip, AudioFileClip, VideoClip, CompositeVideoClip, concatenate_videoclips, concatenate_audioclips )
 from moviepy.audio.AudioClip import AudioClip
@@ -125,7 +126,7 @@ class Dali_movie():
                 return Dali_clip(name, video, 0)
             except Exception as e:
                 pass
-        sys.exit(f"ERROR-VIDEO_FILEPATH-{filePath}")
+        sys.exit(f"ERROR-VIDEO_FILEPATH-{self._clean_path(filePath)}")
 
     def importAudio(self, name, filePath):
         try: 
@@ -138,7 +139,17 @@ class Dali_movie():
                 return Dali_clip(name, audio, 0)
             except Exception as e:
                 pass
-        sys.exit(f"ERROR-VIDEO_FILEPATH-{filePath}")
+        sys.exit(f"ERROR-AUDIO_FILEPATH-{self._clean_path(filePath)}")
+    
+    def _clean_path(self, path):
+        pattern = r"(.*[a-f0-9-]{36})/(.*)"
+        # Search using the pattern
+        match = re.match(pattern, path)
+        if match:
+            result = match.group(2)
+            return result  # Output the part before the UID
+        else:
+            return path
     
     #CUT
     def cut(self, name, video, start, end):
