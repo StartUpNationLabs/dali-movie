@@ -95,10 +95,7 @@ const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
         isDragReject,
     } = useDropzone({
         onDrop,
-        accept: { 
-            "video/*": [],
-            "audio/*": [],
-         }, // Allow video file types
+        accept: { "video/*": [] }, // Allow video file types
         maxFiles,
         maxSize,
     });
