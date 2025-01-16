@@ -39,6 +39,9 @@ AddMedia:
 // Add a title or a subtitle
 AddText:
     'add' QuotedContent 'for' duration=TIME
+    ('color' textColor=Color)?
+    ('position' percentageFromLeft=Percentage ',' percentageFromTop=Percentage)?
+    ('background' backgroundColor=Color)?
     (mode=StartingRule referential=[Referentials:ID] |
      mode=EndingRule referential=[Referentials:ID] )?
     ('named' name=ID)?
@@ -83,13 +86,13 @@ hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 
 terminal TIME: /\d+((h\d+)?m\d+)?s/;
+terminal PERCENTAGE: /([0-9]{1,2})/;
 terminal ID: /[a-zA-Z0-9\-_]+/;
 terminal FILENAME: '"' -> '"' | "'" -> "'";
 
 hidden terminal WS: /\s+/;
 
 terminal HEX_COLOR: /#?([0-9a-f]{6}|[0-9a-f]{3})/;
-terminal PERCENTAGE: /([0-9]{1,2})/;
 terminal INT returns number: /[0-9]+/;
 terminal FreeTextInBrackets:
   '[' -> ']'
