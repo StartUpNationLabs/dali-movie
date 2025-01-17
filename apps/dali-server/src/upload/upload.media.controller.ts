@@ -22,10 +22,12 @@ export class UploadMediaController {
         sessionId,
         UPLOAD_PATH
       );
-      const files = fs.readdirSync(sessionDir).map((filename) => ({
-        filename,
-        url: `http://localhost:${PORT}/uploads/${sessionId}/${filename}`,
-      }));
+      const files = fs.readdirSync(sessionDir).map((filename) => {
+        return {
+          filename,
+          url: `http://localhost:${PORT}/uploads/${sessionId}/${filename}`,
+        };
+      });
       return res.status(200).json({ success: true, files });
     } catch (error: any) {}
     return res.status(500).json({ success: false, message: 'error' });

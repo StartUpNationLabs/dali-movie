@@ -3,17 +3,13 @@ import multer, { StorageEngine } from 'multer';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { UploadMediaController } from './upload/upload.media.controller.js';
 import { UploadMediaService } from './upload/upload.media.service.js';
 import { VideoController } from './video/video.controller.js';
+import { UPLOAD_PATH } from './constants.js';
 
 const app = express();
 export const PORT = 5000;
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const BASE_PATH = __dirname;
 
 // Enable CORS for frontend communication
 app.use(cors());
@@ -21,12 +17,11 @@ app.use(express.json()); // Parse JSON payloads
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded payloads
 
 // Directory to store uploaded files
-const uploadDir = path.join(BASE_PATH, 'uploads');
 const uploadController = new UploadMediaController();
 const videoController = new VideoController();
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(UPLOAD_PATH)) {
+  fs.mkdirSync(UPLOAD_PATH, { recursive: true });
 }
 
 // Configure multer for file uploads
@@ -39,7 +34,7 @@ const storage: StorageEngine = multer.diskStorage({
 
     const sessionDir = UploadMediaService.ensureSessionDir(
       sessionId,
-      uploadDir
+      UPLOAD_PATH
     );
     cb(null, sessionDir); // Save files to the session-specific directory
   },
@@ -58,7 +53,7 @@ const upload = multer({
       'File Name:',
       file.originalname
     );
-    const allowedExtensions = ['.mp4', '.avi', '.mov', '.mkv', 'mp3'];
+    const allowedExtensions = ['.mp4', '.avi', '.mov', '.mkv', '.mp3'];
 
     const fileExtension = path.extname(file.originalname).toLowerCase();
     if (allowedExtensions.includes(fileExtension)) {
@@ -80,7 +75,7 @@ app.post(
 app.post('/:sessionId/timeline', videoController.generateTimeline);
 
 // API route to serve uploaded files (optional)
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', express.static(UPLOAD_PATH));
 
 // Start the server
 app.listen(PORT, () => {
