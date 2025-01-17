@@ -8,48 +8,14 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {useMutation} from "react-query";
 import {Configuration, DefaultApi, SessionIdTimelinePostRequest} from "../openapi";
 import {useCodeStore, useSessionStore} from "./state.js";
+import {Generate} from "./Generate";
 
 
 export const App = () => {
 
     const [isTimelineVisible, setIsTimelineVisible] = useState(true);
-    const code = useCodeStore((state) => state.code);
     const sessionId = useSessionStore((state) => state.session);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const mutation = useMutation(
-        async (
-            data: SessionIdTimelinePostRequest
-        ) => {
-            const api = new DefaultApi(
-                new Configuration({
-                    basePath: 'http://localhost:5000'
-                })
-            );
-            setIsGenerating(true);
-            return (await api.sessionIdGeneratePost(sessionId, {
-                langium: code,
-            })).data;
 
-        }
-        , {
-            onSuccess: (data) => {
-                // Invalidate and refetch
-                if (data.errors && data.errors.length > 0) {
-                    console.error(data.errors)
-                } else {
-                    alert("Video generated successfully" + data.video)
-                }
-                setIsGenerating(false);
-            },
-            onError: (error) => {
-                console.error(error);
-                setIsGenerating(false);
-            }
-        })
-
-    function handleGenerateVideo() {
-        mutation.mutate({langium: code});
-    }
 
     return (
         <>
@@ -111,15 +77,7 @@ export const App = () => {
                         maxSize={1024 * 1024 * 1024}
                         uploadUrl={"http://localhost:5000/upload/" + sessionId}
                     />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleGenerateVideo}
-                        sx={{marginTop: 2}}
-                        disabled={isGenerating}
-                    >
-                        Generate Video
-                    </Button>
+                    <Generate/>
                 </Panel>
 
             </PanelGroup>
