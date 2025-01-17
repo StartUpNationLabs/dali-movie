@@ -74,10 +74,10 @@ export const Generate = () => {
           }}
         >
           {isGenerating ? (
-            <>
+            <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
               <CircularProgress size={50}/>
               <p>This operation might take a while...</p>
-            </>
+            </div>
           ) : videoUrl ? (
             <>
               <video
