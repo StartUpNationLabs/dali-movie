@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { DALI_MOVIE_LIB_PATH, EXPORTED_PATH } from '../constants.js';
 import path from 'path';
-import { VideoController } from '../video/video.controller.js';
 import { PORT } from '../main.js';
 import fs from 'fs';
+import { DaliMovieUtils } from '../service/dali.movie.utils.js';
 
 export class GenerationController {
-
-    async generateVideo(req: Request, res: Response) {
+  private readonly daliMovieUtils: DaliMovieUtils
+  constructor() {
+    this.daliMovieUtils = new DaliMovieUtils();
+  }
+    generateVideo = async (req: Request, res: Response) => {
         try {
             const sessionId = req.params.sessionId;
             if (!sessionId) {
@@ -22,7 +25,7 @@ export class GenerationController {
               fs.mkdirSync(outputDir, { recursive: true });
             }
 
-            const pythonScriptPath = await VideoController.generatePythonScript(req, sessionId);
+            const pythonScriptPath = await this.daliMovieUtils.generatePythonScript(req, sessionId);
 
             const command = `${
                     process.env.PYTHON_PATH || 'python'
@@ -34,7 +37,7 @@ export class GenerationController {
                     PYTHONPATH: (process.env['PYTHON_PATH'] || '') + DALI_MOVIE_LIB_PATH,
                   };
 
-                  const { output, errorOutput, exitCode } = await VideoController.executePythonScript(
+                  const { output, errorOutput, exitCode } = await this.daliMovieUtils.executePythonScript(
                     command,
                     env,
                     []
