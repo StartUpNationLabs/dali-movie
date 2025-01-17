@@ -1,0 +1,21 @@
+import video clipA "video.mp4"
+import video clipB "video.mp4"
+import audio ambient "audio.mp3"
+import audio narration "audio.mp3"
+
+cut clipA from 1s to 3s named actionScene
+cut clipB from 2s to 5s named reactionScene
+
+add actionScene 
+add narration starting at actionScene 
+add reactionScene starting after actionScene
+
+text ["Action Begins"] for 3s named actionText
+add actionText 
+
+text ["Reaction Shot"] for 3s named reactionText
+add reactionText starting after actionScene
+
+add ambient starting 1s after reactionScene
+
+export here "action_reaction.mp4"

@@ -1,0 +1,13 @@
+import video movieClip "video.mp4"
+import audio voiceover "audio.mp3"
+
+cut movieClip from 1s to 4s named mainScene
+
+add mainScene
+add voiceover starting at mainScene
+
+text ["Chapter 1: The Beginning"] for 10s named chapterTitle
+add chapterTitle starting after mainScene
+
+text ["This is an introduction to the scene."] for 5s named subtitle1
+add subtitle1 starting at chapterTitle
