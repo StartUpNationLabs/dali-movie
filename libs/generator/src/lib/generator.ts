@@ -142,6 +142,10 @@ function addText(command: AddText): string {
     content: command.content,
     duration: command.duration,
     name: variableName,
+    backgroundColor: command.backgroundColor,
+    textColor: command.textColor,
+    percentageFromLeft: command.percentageFromLeft,
+    percentageFromTop: command.percentageFromTop,
   };
   let textCode = text(textCommand);
   return textCode + addMedia({
