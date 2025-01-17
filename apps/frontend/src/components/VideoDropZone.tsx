@@ -72,7 +72,6 @@ const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
             setUploadedFiles((prevFiles: {
                 name: string
             }[]) => [
-                    ...prevFiles,
                     ...(response.data.files.map((file: {
                         filename: string
                     }) => ({ name: file.filename }))),
@@ -95,7 +94,7 @@ const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
         isDragReject,
     } = useDropzone({
         onDrop,
-        accept: { 
+        accept: {
             "video/*": [],
             "audio/*": [],
          }, // Allow video file types
