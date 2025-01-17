@@ -102,7 +102,7 @@ export const App = () => {
                     <VideoDropzone
                         maxFiles={50}
                         maxSize={1024 * 1024 * 1024}
-                        uploadUrl={"http://localhost:5000/upload-videos/" + sessionId}
+                        uploadUrl={"http://localhost:5000/upload/" + sessionId}
                     />
                     <Button
                         variant="contained"

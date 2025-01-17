@@ -26,8 +26,8 @@ export class UploadMediaController {
         filename,
         url: `http://localhost:${PORT}/uploads/${sessionId}/${filename}`,
       }));
-      res.status(200).json({ success: true, files });
+      return res.status(200).json({ success: true, files });
     } catch (error: any) {}
-    res.status(500).json({ success: false, message: 'error' });
+    return res.status(500).json({ success: false, message: 'error' });
   };
 }

@@ -6,6 +6,7 @@ export class UploadMediaService {
 
   static ensureSessionDir(sessionId: string, uploadDir: string): string {
     const sessionDir = join(uploadDir, sessionId);
+    console.log(sessionDir);
     if (!existsSync(sessionDir)) {
       mkdirSync(sessionDir, { recursive: true });
     }

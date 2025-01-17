@@ -57,7 +57,7 @@ const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
 
     const handleFileUpload = async (files: File[]) => {
         const formData = new FormData();
-        files.forEach((file) => formData.append("videos", file));
+        files.forEach((file) => formData.append("media", file));
         try {
             setUploading(true);
             setError(null as any);
