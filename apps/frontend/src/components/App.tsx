@@ -15,6 +15,7 @@ export const App = () => {
     const [isTimelineVisible, setIsTimelineVisible] = useState(true);
     const code = useCodeStore((state) => state.code);
     const sessionId = useSessionStore((state) => state.session);
+    const [isGenerating, setIsGenerating] = useState(false);
     const mutation = useMutation(
         async (
             data: SessionIdTimelinePostRequest
@@ -24,6 +25,7 @@ export const App = () => {
                     basePath: 'http://localhost:5000'
                 })
             );
+            setIsGenerating(true);
             return (await api.sessionIdGeneratePost(sessionId, {
                 langium: code,
             })).data;
@@ -37,11 +39,16 @@ export const App = () => {
                 } else {
                     alert("Video generated successfully" + data.video)
                 }
+                setIsGenerating(false);
             },
+            onError: (error) => {
+                console.error(error);
+                setIsGenerating(false);
+            }
         })
 
     function handleGenerateVideo() {
-        mutation.mutate({languim: code});
+        mutation.mutate({langium: code});
     }
 
     return (
@@ -109,6 +116,7 @@ export const App = () => {
                         color="primary"
                         onClick={handleGenerateVideo}
                         sx={{marginTop: 2}}
+                        disabled={isGenerating}
                     >
                         Generate Video
                     </Button>
