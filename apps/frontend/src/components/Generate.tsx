@@ -74,7 +74,10 @@ export const Generate = () => {
           }}
         >
           {isGenerating ? (
-            <CircularProgress size={50}/>
+            <>
+              <CircularProgress size={50}/>
+              <p>This operation might take a while...</p>
+            </>
           ) : videoUrl ? (
             <>
               <video
