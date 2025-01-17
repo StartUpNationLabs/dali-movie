@@ -6,7 +6,8 @@ import fs from 'fs';
 import { UploadMediaController } from './upload/upload.media.controller.js';
 import { UploadMediaService } from './upload/upload.media.service.js';
 import { VideoController } from './video/video.controller.js';
-import { UPLOAD_PATH } from './constants.js';
+import { EXPORTED_PATH, UPLOAD_PATH } from './constants.js';
+import { GenerationController } from './generation/generation.controller.js';
 
 const app = express();
 export const PORT = 5000;
@@ -19,9 +20,14 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded payloads
 // Directory to store uploaded files
 const uploadController = new UploadMediaController();
 const videoController = new VideoController();
+const generationController = new GenerationController();
 
 if (!fs.existsSync(UPLOAD_PATH)) {
   fs.mkdirSync(UPLOAD_PATH, { recursive: true });
+}
+
+if (!fs.existsSync(EXPORTED_PATH)) {
+  fs.mkdirSync(EXPORTED_PATH, { recursive: true });
 }
 
 // Configure multer for file uploads
@@ -76,6 +82,10 @@ app.post('/:sessionId/timeline', videoController.generateTimeline);
 
 // API route to serve uploaded files (optional)
 app.use('/uploads', express.static(UPLOAD_PATH));
+
+app.use('/:sessionId/generate', generationController.generateVideo); 
+
+app.use('/output', express.static(EXPORTED_PATH));
 
 // Start the server
 app.listen(PORT, () => {

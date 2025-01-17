@@ -5,6 +5,7 @@
 
 #generated
 dali/src/language/generated
+libs/python/dali_movie/__pycache__
 dali-server/out
 
 # compiled output

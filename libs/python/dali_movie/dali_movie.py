@@ -36,7 +36,7 @@ class Dali_movie():
         if self.export_mode == "export":
             if self.export_mode != "timeline" : print(self)
 
-            for clip in self.timeline["video"]:
+            for clip in self._timeline["video"]:
                 clip.media = clip.media.getmovie("video")
             video_track = self._add_blanks(self._timeline["video"], ColorClip((1280,720)))
             audio_track = self._add_blanks(self._timeline["audio"], AudioClip(lambda t: [0] * 2, fps=44100))
@@ -62,6 +62,7 @@ class Dali_movie():
                 final_track[0] = CompositeVideoClip(final_track)
 
             final_track[0].write_videofile(output_filename, fps=24)
+            print('-----\n'+output_filename)
             return output_filename
         else:
             timeline = self.print_timeline(self._timeline["video"], self._timeline["audio"], self._timeline["subtitle"])

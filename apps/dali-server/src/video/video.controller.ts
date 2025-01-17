@@ -7,8 +7,7 @@ import path from 'path';
 import {
   DALI_MOVIE_LIB_PATH,
   FONT_PATH,
-  GENERATED_PATH,
-  UPLOAD_PATH,
+  GENERATED_PATH
 } from '../constants.js';
 import { VideoService } from './video.service.js';
 import { Request, Response } from 'express';
@@ -48,12 +47,13 @@ export class VideoController {
   };
 
   // Helper function to execute the Python script
-  executePythonScript = (
+  static executePythonScript = (
     command: string,
-    env: NodeJS.ProcessEnv
+    env: NodeJS.ProcessEnv,
+    params : string[]
   ): Promise<{ output: string; errorOutput: string; exitCode: number }> => {
     return new Promise((resolve) => {
-      const subprocess = spawn(command, ['timeline'], {
+      const subprocess = spawn(command, params, {
         shell: true,
         env,
       });
@@ -87,7 +87,7 @@ export class VideoController {
 
       console.log('Code : ', daliCode);
       const document = await this.parseDaliCode(services, daliCode);
-      this.videoService.updateFilePath(document, sessionId, UPLOAD_PATH);
+      this.videoService.updateFilePath(document, sessionId);
 
       const model = document.parseResult.value;
       console.log('Code : ', model);
@@ -103,9 +103,10 @@ export class VideoController {
         PYTHONPATH: (process.env['PYTHON_PATH'] || '') + DALI_MOVIE_LIB_PATH,
       };
 
-      const { output, errorOutput, exitCode } = await this.executePythonScript(
+      const { output, errorOutput, exitCode } = await VideoController.executePythonScript(
         command,
-        env
+        env,
+        ['timeline']
       );
 
       if (exitCode !== 0) {
