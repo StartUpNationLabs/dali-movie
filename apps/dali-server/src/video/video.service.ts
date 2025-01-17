@@ -6,7 +6,7 @@ import { EXPORTED_PATH, UPLOAD_PATH } from '../constants.js';
 export class VideoService {
   constructor() {}
 
-  updateFilePath(
+  static updateFilePath(
     document: LangiumDocument<Script>,
     prefix: string
   ): void {
