@@ -14,7 +14,7 @@ function sanitizeInput(inputString: string) {
 
     const pattern = /[a-zA-Z0-9\-_\\/.]+/g;
     const matches = inputString.match(pattern);
-    return (matches ? matches.join('') : '').replaceAll(/[\/\\\.]/g, "_");
+    return (matches ? matches.join('') : '').replaceAll(/[\/\\\.\-]/g, "_");
 }
 const VideoDropzone = ({ uploadUrl, maxFiles = 5, maxSize = 524288000 }: {
     uploadUrl: string,
