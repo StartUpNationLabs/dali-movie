@@ -41,7 +41,8 @@ export class VideoController {
   generatePythonScriptPath = (model: any, sessionId: string): string => {
     return generateMovieFromServerPython(
       model,
-      path.join(path.join(GENERATED_PATH, 'python'), sessionId, 'response.py'),
+      path.join(GENERATED_PATH, 'python', sessionId),
+      'response.py',
       FONT_PATH.replace(/\\/g, '\\\\')
     );
   };

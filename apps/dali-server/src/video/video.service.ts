@@ -23,7 +23,6 @@ export class VideoService {
           command.file = path
             .join(
               basePath,
-              'uploads',
               prefix,
               command.file.substring(1, command.file.length - 1)
             )
@@ -36,7 +35,6 @@ export class VideoService {
       exportValue.file = path
         .join(
           basePath,
-          'uploads',
           prefix,
           exportValue.file.substring(1, exportValue.file.length - 1)
         )
