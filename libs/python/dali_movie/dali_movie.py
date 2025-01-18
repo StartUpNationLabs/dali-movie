@@ -27,6 +27,7 @@ class Dali_movie():
             "video":[],
             "audio":[],
             "subtitle":[],
+            "overlap":[]
         }
 
         self.errors = []
@@ -85,6 +86,10 @@ class Dali_movie():
             {
                 "name": 'Subtitles',
                 "data": []
+            },
+            {
+                "name": 'Overlap',
+                "data": []
             }
         ]
 
@@ -113,6 +118,15 @@ class Dali_movie():
                     "y": [
                         int(subtitle.start*1000),
                         int(subtitle.end*1000)
+                    ]
+                })
+        for clip in self._timeline["overlap"]:
+            timeline[3]["data"].append(
+                {
+                    "x": clip.name,
+                    "y": [
+                        int(clip.start*1000),
+                        int(clip.end*1000)
                     ]
                 })
 
@@ -224,7 +238,6 @@ class Dali_movie():
         index, previous_dali_clip, following_dali_clip = self._get_clip(track, anchor_time)  
         if previous_dali_clip != None:
             if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
-                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap)
         dali_clip = self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip)
@@ -249,7 +262,6 @@ class Dali_movie():
 
         if previous_dali_clip != None:
             if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
-                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
 
@@ -278,7 +290,6 @@ class Dali_movie():
 
         if previous_dali_clip != None:
             if following_dali_clip != None and following_dali_clip.start < anchor_time + media.duration:
-                #print("NOT ENOUGH PLACE AFTER - Moving Timeline")
                 overlap = anchor_time + media.duration - following_dali_clip.start
                 self._move_clips(track, following_dali_clip, overlap + offset)
         dali_clip = self._place_in_timeline(name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip)
@@ -289,15 +300,17 @@ class Dali_movie():
         start.finish()
     
     def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip):
+        added_dali_clip = Dali_clip(name, media, anchor_time)
         if previous_dali_clip != None and previous_dali_clip.end > anchor_time:
             print(previous_dali_clip.end)
             print(anchor_time)
             print("NOT ENOUGH PLACE BEFORE")
-            print(f"ERROR-NO_SPACE_TO_PLACE-{name}", file=sys.stderr)
             sys.stderr.write(f"ERROR-NO_SPACE_TO_PLACE-{name}\n")
+            if self.export_mode == "timeline":
+                self._timeline["overlap"].append(added_dali_clip)
+                return added_dali_clip
             return False
         
-        added_dali_clip = Dali_clip(name, media, anchor_time)
         track.insert(index+1, added_dali_clip) 
         return added_dali_clip
 
