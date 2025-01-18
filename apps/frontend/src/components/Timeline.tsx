@@ -5,7 +5,7 @@ import {useQuery,} from 'react-query';
 import {useCodeStore, useSessionStore} from "./state.js";
 import {Configuration, DefaultApi} from "../openapi";
 import {useDebounce} from "@uidotdev/usehooks";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 
 function getTime(totalMilliseconds) {
   const milliseconds = Math.floor(totalMilliseconds % 1000);
@@ -35,28 +35,56 @@ export const Timeline = (
         langium: code,
       })).data;
     }, {
-      refetchOnWindowFocus: true,
+      retry: false,
+      retryOnMount: true,
       onError: (error: any) => {
         const errorMessage = error.response.data?.error || 'An unknown server error occurred.';
         const match = errorMessage.match(/(.*)-(.*)/); // Match ERROR- and everything that follows
         const name = match ? match[2] : error;
-        if (errorMessage.includes("NO_SPACE_TO_PLACE")){
-          toast.error('You can\'t supperpose clip '+ name +' with another one.');
-        }
-        else if (errorMessage.includes("CUT_TO_LONG")){
-          toast.error('The cut on '+ name+ ' doesn\'t fit the media duration');
-        }
-        else if (errorMessage.includes("WRONG_REFERENCE")){
-          toast.error('Wrong reference to '+ name);
-        }
-        else if (errorMessage.includes("VIDEO_FILEPATH") || errorMessage.includes("AUDIO_FILEPATH")){
-          toast.error('Wrong file path '+ name);
-        }
-        else{
+        if (errorMessage.includes("NO_SPACE_TO_PLACE")) {
+          toast.error('You can\'t supperpose clip ' + name + ' with another one.', {
+              type: 'error',
+              position: 'top-center',
+              autoClose: false,
+              toastId: 'no-space-toast'
+            }
+          );
+        } else if (errorMessage.includes("CUT_TO_LONG")) {
+          toast.error('The cut on ' + name + ' doesn\'t fit the media duration',
+            {
+              type: 'error',
+              position: 'top-center',
+              autoClose: false,
+              toastId: 'cut-to-long-toast'
+            });
+        } else if (errorMessage.includes("WRONG_REFERENCE")) {
+          toast.error('Wrong reference to ' + name, {
+            type: 'error',
+            position: 'top-center',
+            autoClose: false,
+            toastId: 'wrong-reference-toast'
+          });
+        } else if (errorMessage.includes("VIDEO_FILEPATH") || errorMessage.includes("AUDIO_FILEPATH")) {
+          toast.error('Wrong file path ' + name, {
+            type: 'error',
+            position: 'top-center',
+            autoClose: false,
+            toastId: 'wrong-filepath-toast'
+          });
+        } else {
           console.log(errorMessage)
-          toast.error('Your dali code can\'t compute');
+          toast.error('Your dali code can\'t compute', {
+            type: 'error',
+            position: 'top-center',
+            autoClose: false,
+            toastId: 'dali-code-toast'
+          });
         }
       },
+      onSuccess: (data) => {
+        // clear all toasts
+        toast.dismiss();
+      }
     }
   );
 
@@ -95,9 +123,19 @@ export const Timeline = (
           dataPointIndex: number;
           w: any;
         }) {
-          const {milliseconds: startMilliseconds, seconds: startSeconds, minutes: startMinutes, hours: startHours} = getTime( w.globals.seriesRangeStart[seriesIndex][dataPointIndex]);
-          const {milliseconds: endMilliseconds, seconds: endSeconds, minutes: endMinutes, hours: endHours} = getTime( w.globals.seriesRangeEnd[seriesIndex][dataPointIndex]);
-          return   `<div
+          const {
+            milliseconds: startMilliseconds,
+            seconds: startSeconds,
+            minutes: startMinutes,
+            hours: startHours
+          } = getTime(w.globals.seriesRangeStart[seriesIndex][dataPointIndex]);
+          const {
+            milliseconds: endMilliseconds,
+            seconds: endSeconds,
+            minutes: endMinutes,
+            hours: endHours
+          } = getTime(w.globals.seriesRangeEnd[seriesIndex][dataPointIndex]);
+          return `<div
             <div style="margin-bottom: 8px;">
               <span style="font-weight: bold; color: #333;">Start Time:</span>
               <div style="font-family: monospace; color: #555;">
