@@ -12,6 +12,7 @@ from .enum import *
 from .perf_profiler import Perf
 from .textWrapper import TextWrapper
 from .videoWrapper import VideoWrapper
+from .audioWrapper import AudioWrapper
 
 
 class Dali_movie():
@@ -44,6 +45,9 @@ class Dali_movie():
             for clip in self._timeline["subtitle"]:
                 clip.media = clip.media.getmovie("subtitle")
             subtitle_track = self._add_blanks(self._timeline["subtitle"], TextClip(self._font_path, text="  ", font_size=20, size=(1280,720)).with_fps(20))
+
+            for clip in self._timeline["audio"]:
+                clip.media = clip.media.getmovie("audio")
 
             video_track = [clip.media for clip in video_track]
             audio_track = [clip.media for clip in audio_track]
@@ -131,12 +135,12 @@ class Dali_movie():
 
     def importAudio(self, name, filePath):
         try: 
-            audio = AudioFileClip(filePath) 
+            audio = AudioWrapper(filePath) 
             return Dali_clip(name, audio, 0)
         except Exception as e:
             try:
                 filePath = os.path.abspath(filePath)
-                audio = AudioFileClip(filePath) 
+                audio = AudioWrapper(filePath) 
                 return Dali_clip(name, audio, 0)
             except Exception as e:
                 pass
@@ -319,7 +323,7 @@ class Dali_movie():
             if clip_type:
                     return self._timeline["video"],"video"
             return self._timeline["video"]
-        elif isinstance(media, AudioClip):
+        elif isinstance(media, AudioWrapper):
             if self.export_mode != "timeline" : print("Is Audio")
             if clip_type:
                     return self._timeline["audio"],"audio"
