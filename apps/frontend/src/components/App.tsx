@@ -9,6 +9,7 @@ import {useMutation} from "react-query";
 import {Configuration, DefaultApi, SessionIdTimelinePostRequest} from "../openapi";
 import {useCodeStore, useSessionStore} from "./state.js";
 import {Generate} from "./Generate";
+import { ToastContainer } from 'react-toastify';
 
 
 export const App = () => {
@@ -96,6 +97,7 @@ export const App = () => {
                     {isTimelineVisible ? <VisibilityOff/> : <Visibility/>}
                 </IconButton>
             </Box>
+            <ToastContainer position="bottom-right" />
         </>
     );
 };

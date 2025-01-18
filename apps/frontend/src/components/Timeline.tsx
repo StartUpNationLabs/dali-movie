@@ -5,6 +5,7 @@ import {useQuery,} from 'react-query';
 import {useCodeStore, useSessionStore} from "./state.js";
 import {Configuration, DefaultApi} from "../openapi";
 import {useDebounce} from "@uidotdev/usehooks";
+import { toast } from 'react-toastify';
 
 function getTime(totalMilliseconds) {
   const milliseconds = Math.floor(totalMilliseconds % 1000);
@@ -34,7 +35,28 @@ export const Timeline = (
         langium: code,
       })).data;
     }, {
-      refetchOnWindowFocus: true
+      refetchOnWindowFocus: true,
+      onError: (error: any) => {
+        const errorMessage = error.response.data?.error || 'An unknown server error occurred.';
+        const match = errorMessage.match(/(.*)-(.*)/); // Match ERROR- and everything that follows
+        const name = match ? match[2] : error;
+        if (errorMessage.includes("NO_SPACE_TO_PLACE")){
+          toast.error('You can\'t supperpose clip '+ name +' with another one.');
+        }
+        else if (errorMessage.includes("CUT_TO_LONG")){
+          toast.error('The cut on '+ name+ ' doesn\'t fit the media duration');
+        }
+        else if (errorMessage.includes("WRONG_REFERENCE")){
+          toast.error('Wrong reference to '+ name);
+        }
+        else if (errorMessage.includes("VIDEO_FILEPATH") || errorMessage.includes("AUDIO_FILEPATH")){
+          toast.error('Wrong file path '+ name);
+        }
+        else{
+          console.log(errorMessage)
+          toast.error('Your dali code can\'t compute');
+        }
+      },
     }
   );
 

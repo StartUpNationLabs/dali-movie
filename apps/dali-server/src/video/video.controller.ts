@@ -33,10 +33,12 @@ export class VideoController {
 
       if (exitCode !== 0) {
         console.error(`Subprocess exited with code ${exitCode}`);
+        const match = errorOutput.match(/(ERROR-)(.*)/); // Match ERROR- and everything that follows
+        const error_text = match ? match[2] : errorOutput;
         res.status(500).json({
           success: false,
           message: 'Error executing Python script',
-          error: errorOutput,
+          error: error_text,
         });
         return;
       }

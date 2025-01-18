@@ -103,7 +103,7 @@ app.listen(PORT, () => {
 //   const model = document.parseResult.value;
 //   const python = generateMoviePython(model, "./exemple.dali", "./result.py");
 //
-//   const command = `python3 ${python}`;
+//   const command = `python ${python}`;
 //   exec(command, (error: Error | null, stdout: string, stderr: string) => {
 //     if (error) {
 //         console.error(`Error: ${error.message}`);
