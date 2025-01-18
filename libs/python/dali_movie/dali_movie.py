@@ -376,7 +376,7 @@ class Dali_movie():
         try:
             if len(track) == 0:
                 return 0, None, None
-            if(track[0].start >= anchor_time):
+            if(track[0].start > anchor_time):
                 return 0, None, track[0]
             for i in range(len(track)):
                 if track[i+1].start >= anchor_time:
