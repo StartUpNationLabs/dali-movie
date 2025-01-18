@@ -27,7 +27,7 @@ export const Timeline = (
   const query = useQuery(['timeline', debouncedCode], async () => {
       const api = new DefaultApi(
         new Configuration({
-          basePath: 'http://localhost:5000'
+          basePath: 'http://localhost:5001'
         })
       );
       return (await api.sessionIdTimelinePost(sessionId, {

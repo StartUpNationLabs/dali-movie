@@ -16,7 +16,7 @@ export const Generate = () => {
     async (data: SessionIdTimelinePostRequest) => {
       const api = new DefaultApi(
         new Configuration({
-          basePath: "http://localhost:5000",
+          basePath: "http://localhost:5001",
         })
       );
       setIsGenerating(true);
@@ -64,9 +64,9 @@ export const Generate = () => {
 
       {/* Full-Screen Modal for Loading */}
       <Dialog open={modalOpen} fullScreen>
-        <DialogTitle>{isGenerating ? "Generating Video..." : "Video Generation Completed"}</DialogTitle>
+        {/*<DialogTitle>{isGenerating ? "Generating Video..." : "Video Generation Completed"}</DialogTitle>*/}
         <DialogContent
-          sx={{
+          sx={{ 
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -90,6 +90,7 @@ export const Generate = () => {
                 <source src={videoUrl} type="video/mp4"/>
                 Your browser does not support the video tag.
               </video>
+              <div style={{ marginTop: '20px' }}>{message}</div>
               <Button
                 variant="contained"
                 color="primary"
@@ -99,14 +100,19 @@ export const Generate = () => {
               >
                 Download Video
               </Button>
-              <div>{message}</div>
             </>
           ) : (
             <div>{message}</div>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setModalOpen(false)} color="primary">
+        <DialogActions sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "30px"
+          }}>
+          <Button onClick={() => setModalOpen(false)} color="primary" size="large">
             Close
           </Button>
         </DialogActions>

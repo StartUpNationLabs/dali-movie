@@ -75,7 +75,7 @@ export const App = () => {
                     <VideoDropzone
                         maxFiles={50}
                         maxSize={1024 * 1024 * 1024}
-                        uploadUrl={"http://localhost:5000/upload/" + sessionId}
+                        uploadUrl={"http://localhost:5001/upload/" + sessionId}
                     />
                     <Generate/>
                 </Panel>

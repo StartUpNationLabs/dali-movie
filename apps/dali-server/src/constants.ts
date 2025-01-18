@@ -15,7 +15,7 @@ export const DALI_MOVIE_LIB_PATH = join(
   'libs',
   'python'
 );
-export const FONT_PATH = path.join(__dirname, 'src', 'assets', 'arial.TTF');
+export const FONT_PATH = path.join(__dirname, 'src', 'assets', 'futura.otf');
 
 if (!existsSync(UPLOAD_PATH)) {
   mkdirSync(UPLOAD_PATH, { recursive: true });

@@ -38,17 +38,26 @@ class Dali_movie():
         if self.export_mode == "export":
             if self.export_mode != "timeline" : print(self)
 
+            video_length = self._timeline["audio"][-1].end
+            for clip in self._timeline["audio"]:
+                clip.media = clip.media.getmovie("audio")
+
+            for clip in self._timeline["subtitle"]:
+                clip.media = clip.media.getmovie("subtitle")
+            subtitle_track = self._add_blanks(self._timeline["subtitle"], TextClip(self._font_path, text="  ", font_size=20, size=(1280,720)).with_fps(20))                
+
             for clip in self._timeline["video"]:
                 clip.media = clip.media.getmovie("video")
+
+            length_to_add = video_length - self._timeline["video"][-1].end
+            if length_to_add >0 :
+                dali_clip = Dali_clip("blank", ColorClip((1280,720)).with_duration(length_to_add), 0)
+                self._timeline["video"].append(dali_clip) 
+
             video_track = self._add_blanks(self._timeline["video"], ColorClip((1280,720)))
             audio_track = self._add_blanks(self._timeline["audio"], AudioClip(lambda t: [0] * 2, fps=44100))
             
-            for clip in self._timeline["subtitle"]:
-                clip.media = clip.media.getmovie("subtitle")
-            subtitle_track = self._add_blanks(self._timeline["subtitle"], TextClip(self._font_path, text="  ", font_size=20, size=(1280,720)).with_fps(20))
-
-            for clip in self._timeline["audio"]:
-                clip.media = clip.media.getmovie("audio")
+            
 
             video_track = [clip.media for clip in video_track]
             audio_track = [clip.media for clip in audio_track]

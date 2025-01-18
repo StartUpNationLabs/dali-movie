@@ -10,7 +10,7 @@ import { EXPORTED_PATH, UPLOAD_PATH } from './constants.js';
 import { GenerationController } from './generation/generation.controller.js';
 
 const app = express();
-export const PORT = 5000;
+export const PORT = 5001;
 
 // Enable CORS for frontend communication
 app.use(cors());
