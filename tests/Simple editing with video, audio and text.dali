@@ -2,7 +2,6 @@ import audio audio_mp3 "audio.mp3"
 import video video_mp4 "video.mp4"
 
 cut video_mp4 from start for 3s named introCut
-cut video_mp4 from 4s to 5s named mainCut
 
 add introCut 
 add audio_mp3 
