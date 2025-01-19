@@ -18,6 +18,11 @@ To run the dev server for your app, use:
 ```sh
 npx nx serve dali-server
 ```
+and in another terminal run the frontend
+
+```sh
+npx nx serve frontend
+```
 
 To create a production bundle:
 
