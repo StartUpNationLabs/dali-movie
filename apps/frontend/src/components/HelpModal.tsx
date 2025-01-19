@@ -45,13 +45,13 @@ Add text (titles, subtitles) with style and position options.
 **Example:** Add a title for 5 seconds, in red, at the top-left corner:
 
 \`\`\`plaintext
-text "Welcome" for 5s color RED position 10, 10 named myText
+text [Welcome] for 5s color RED position 10, 10 named myText
 \`\`\`
 
 **Example:** Add a subtitle with a black background (positioning and background are optional):
 
 \`\`\`plaintext
-text "Subtitle here" for 10s background BLACK named mySubtitle
+text [Subtitle here] for 10s background BLACK named mySubtitle
 \`\`\`
 
 ## 4. Add Media or Text to the Script
