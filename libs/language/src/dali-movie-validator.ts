@@ -65,6 +65,7 @@ export class DaliMovieValidator {
     script: Script,
     accept: ValidationAcceptor
   ): void {
+    let referential: string | undefined;
     script.commands.forEach((command) => {
       switch (command.$type) {
         case "Cut":
@@ -83,7 +84,7 @@ export class DaliMovieValidator {
         case "AddMedia":
           let addMedia = command as AddMedia;
           let mediaRef = addMedia.mediaRef?.ref?.name;
-          let referential = addMedia.referential?.ref?.name;
+          referential = addMedia.referential?.ref?.name;
           if (mediaRef && mediaRef === referential) {
             accept(
               "error",
