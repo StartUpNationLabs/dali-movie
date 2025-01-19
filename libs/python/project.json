@@ -12,7 +12,7 @@
       ],
       "options": {
         "outputPath": "dist/libs/dali_movie",
-        "command": "npx copyfiles -u 1 libs/python/dali_movie/* dist/libs"
+        "command": "python3 -m pip install -r libs/python/dali_movie/requirements.txt && npx copyfiles -u 1 libs/python/dali_movie/* dist/libs"
       }
     }
   }
