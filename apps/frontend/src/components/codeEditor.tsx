@@ -2,6 +2,9 @@ import {useEffect, useRef} from "react";
 import {MonacoEditorLanguageClientWrapper} from "monaco-editor-wrapper";
 import {setupConfigClassic} from "../setupClassic.js";
 import {useCodeStore, useEditorStore} from "./state.js";
+import {IconButton} from "@mui/material";
+import HelpIcon from '@mui/icons-material/Help';
+import HelpModal from "./HelpModal";
 
 const userConfig = setupConfigClassic();
 const wrapper = new MonacoEditorLanguageClientWrapper();
@@ -32,6 +35,9 @@ export const CodeEditor = () => {
   }, []);
 
   return (
-    <div ref={ref} style={{width: '100%', height: '100%'}}/>
+    <div style={{position: 'relative', width: '100%', height: '100%'}}>
+      <HelpModal/>
+      <div ref={ref} style={{width: '100%', height: '100%'}}/>
+    </div>
   );
 }
