@@ -139,19 +139,19 @@ export const Timeline = (
             <div style="margin-bottom: 8px;">
               <span style="font-weight: bold; color: #333;">Start Time:</span>
               <div style="font-family: monospace; color: #555;">
-                <span><strong>Hours:</strong> ${startHours}</span>
-                <span><strong>Minutes:</strong> ${startMinutes}</span>
-                <span><strong>Seconds:</strong> ${startSeconds}</span>
-                <span><strong>Milliseconds:</strong> ${startMilliseconds}</span>
+                <span>${startHours} <strong>Hours</strong> </span>
+                <span>${startMinutes} <strong>Minutes</strong></span>
+                <span>${startSeconds} <strong>Seconds</strong></span>
+                <span>${startMilliseconds} <strong>Milliseconds:</strong></span>
               </div>
             </div>
             <div style="margin-bottom: 8px;">
               <span style="font-weight: bold; color: #333;">End Time:</span>
               <div style="font-family: monospace; color: #555;">
-                <span><strong>Hours:</strong> ${endHours}</span>
-                <span><strong>Minutes:</strong> ${endMinutes}</span>
-                <span><strong>Seconds:</strong> ${endSeconds}</span>
-                <span><strong>Milliseconds:</strong> ${endMilliseconds}</span>
+                <span>${endHours} <strong>Hours</strong> </span>
+                <span>${endMinutes} <strong>Minutes</strong></span>
+                <span>${endSeconds} <strong>Seconds</strong></span>
+                <span>${endMilliseconds} <strong>Milliseconds:</strong></span>
               </div>
             </div>
           </div>`;
