@@ -117,8 +117,6 @@ export here "output.mp4"
         >
           <ReactMarkdown
             remarkRehypeOptions={{ allowDangerousHtml: true }}
-
-
           >{helpText}</ReactMarkdown>
           <Button onClick={handleClose} color="primary" style={{ marginTop: '10px' }}>
             Close

@@ -130,7 +130,7 @@ export const Timeline = (
                 <span>${startHours} <strong>Hours</strong> </span>
                 <span>${startMinutes} <strong>Minutes</strong></span>
                 <span>${startSeconds} <strong>Seconds</strong></span>
-                <span>${startMilliseconds} <strong>Milliseconds:</strong></span>
+                <span>${startMilliseconds} <strong>Milliseconds</strong></span>
               </div>
             </div>
             <div style="margin-bottom: 8px;">
@@ -139,7 +139,7 @@ export const Timeline = (
                 <span>${endHours} <strong>Hours</strong> </span>
                 <span>${endMinutes} <strong>Minutes</strong></span>
                 <span>${endSeconds} <strong>Seconds</strong></span>
-                <span>${endMilliseconds} <strong>Milliseconds:</strong></span>
+                <span>${endMilliseconds} <strong>Milliseconds</strong></span>
               </div>
             </div>
           </div>`;
