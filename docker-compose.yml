@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: ghcr.io/startupnationlabs/dali-movie/app:latest
     ports:
       - "5001:5001"
       - "4300:4300"

@@ -18,7 +18,7 @@ COPY . /app
 RUN npx nx reset
 RUN npx nx build frontend
 RUN npx nx build dali-server
-RUN npx nx build python
+RUN npx copyfiles -u 1 libs/python/dali_movie/* dist/libs --outputPath=dist/libs/dali_movie
 
 # python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
