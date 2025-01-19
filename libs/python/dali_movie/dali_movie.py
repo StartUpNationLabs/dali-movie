@@ -38,7 +38,9 @@ class Dali_movie():
         if self.export_mode == "export":
             if self.export_mode != "timeline" : print(self)
 
-            video_length = self._timeline["audio"][-1].end
+            video_length = 0
+            if len(self._timeline["audio"]) > 1: 
+                video_length= self._timeline["audio"][-1].end
             for clip in self._timeline["audio"]:
                 clip.media = clip.media.getmovie("audio")
 
@@ -311,14 +313,23 @@ class Dali_movie():
     def _place_in_timeline(self, name, track, index, media, previous_dali_clip, anchor_time, following_dali_clip):
         added_dali_clip = Dali_clip(name, media, anchor_time)
         if previous_dali_clip != None and previous_dali_clip.end > anchor_time:
-            print(previous_dali_clip.end)
-            print(anchor_time)
-            print("NOT ENOUGH PLACE BEFORE")
-            sys.stderr.write(f"ERROR-NO_SPACE_TO_PLACE-{name}\n")
-            if self.export_mode == "timeline":
-                self._timeline["overlap"].append(added_dali_clip)
-                return added_dali_clip
-            return False
+            if isinstance(previous_dali_clip.media, TextWrapper) and not isinstance(media, TextWrapper):
+                track.pop(index-1)
+                text_anchor_time = previous_dali_clip.start
+                text_track=self._timeline["subtitle"]
+
+                text_index, text_previous_dali_clip, text_following_dali_clip = self._get_clip(text_track, text_anchor_time)
+                new_dali_clip = self._place_in_timeline(previous_dali_clip.name, text_track, text_index, previous_dali_clip.media, text_previous_dali_clip, text_anchor_time, text_following_dali_clip)
+                new_dali_clip.dependencies = previous_dali_clip.dependencies
+            else:
+                print(previous_dali_clip.end)
+                print(anchor_time)
+                print("NOT ENOUGH PLACE BEFORE")
+                sys.stderr.write(f"ERROR-NO_SPACE_TO_PLACE-{name}\n")
+                if self.export_mode == "timeline":
+                    self._timeline["overlap"].append(added_dali_clip)
+                    return added_dali_clip
+                return False
         
         track.insert(index+1, added_dali_clip) 
         return added_dali_clip
