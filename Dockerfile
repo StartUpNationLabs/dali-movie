@@ -4,7 +4,7 @@ FROM node:22-bookworm
 RUN apt-get update && apt-get install -y python3 python3-pip
 
 # install python packages
-RUN pip3 install matplotlib pymovie pillow --break-system-packages
+RUN pip3 install matplotlib pillow --break-system-packages
 # Install ffmpeg
 RUN apt-get install -y ffmpeg
 

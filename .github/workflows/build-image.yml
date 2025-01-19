@@ -32,6 +32,6 @@ jobs:
       - name: Build and push api image
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ steps.downcase.outputs.downcase }}/app:${{ github.sha }}, ghcr.io/${{ steps.downcase.outputs.downcase }}/app:${{ github.ref_name }}
