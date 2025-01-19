@@ -8,7 +8,7 @@ class AudioWrapper():
 
     def subclipped(self, start, end):
         audioCut = self.audio.subclipped(start, end) 
-        audio = audioWrapper(self.audioPath)
+        audio = AudioWrapper(self.audioPath)
         audio.audio = audioCut
         audio.duration = audioCut.duration 
         return audio
