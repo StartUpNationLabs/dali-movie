@@ -45,7 +45,8 @@ export const Timeline = (
           toast.error('You can\'t supperpose clip ' + name + ' with another one.', {
               type: 'error',
               autoClose: false,
-              toastId: 'no-space-toast'
+              toastId: 'no-space-toast',
+              position: 'top-center'
             }
           );
         } else if (errorMessage.includes("CUT_TO_LONG")) {
@@ -53,19 +54,22 @@ export const Timeline = (
             {
               type: 'error',
               autoClose: false,
-              toastId: 'cut-to-long-toast'
+              toastId: 'cut-to-long-toast',
+              position: 'top-center'
             });
         } else if (errorMessage.includes("WRONG_REFERENCE")) {
           toast.error(name + ' is not on the timeline', {
             type: 'error',
             autoClose: false,
-            toastId: 'wrong-reference-toast'
+            toastId: 'wrong-reference-toast',
+            position: 'top-center'
           });
         } else if (errorMessage.includes("VIDEO_FILEPATH") || errorMessage.includes("AUDIO_FILEPATH")) {
           toast.error('Wrong file path ' + name, {
             type: 'error',
             autoClose: false,
-            toastId: 'wrong-filepath-toast'
+            toastId: 'wrong-filepath-toast',
+            position: 'top-center'
           });
         }
       },
