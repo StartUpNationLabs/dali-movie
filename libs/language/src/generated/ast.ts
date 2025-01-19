@@ -83,6 +83,14 @@ export function isCommand(item: unknown): item is Command {
     return reflection.isInstance(item, Command);
 }
 
+export type Cutable = Cut | LoadAudio | LoadVideo;
+
+export const Cutable = 'Cutable';
+
+export function isCutable(item: unknown): item is Cutable {
+    return reflection.isInstance(item, Cutable);
+}
+
 export type Media = Cut | LoadAudio | LoadVideo | Text;
 
 export const Media = 'Media';
@@ -146,7 +154,7 @@ export interface Cut extends AstNode {
     readonly $type: 'Cut';
     duration: string;
     from: 'end' | 'start' | string;
-    mediaRef: Reference<Media>;
+    mediaRef: Reference<Cutable>;
     name: string;
 }
 
@@ -255,6 +263,7 @@ export type DaliMovieAstType = {
     AddText: AddText
     Command: Command
     Cut: Cut
+    Cutable: Cutable
     EndingRule: EndingRule
     Export: Export
     LoadAudio: LoadAudio
@@ -269,7 +278,7 @@ export type DaliMovieAstType = {
 export class DaliMovieAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [AddMedia, AddText, Command, Cut, EndingRule, Export, LoadAudio, LoadVideo, Media, Referentials, Script, StartingRule, Text];
+        return [AddMedia, AddText, Command, Cut, Cutable, EndingRule, Export, LoadAudio, LoadVideo, Media, Referentials, Script, StartingRule, Text];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -282,7 +291,9 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
             }
             case Cut:
             case LoadAudio:
-            case LoadVideo:
+            case LoadVideo: {
+                return this.isSubtype(Command, supertype) || this.isSubtype(Cutable, supertype) || this.isSubtype(Media, supertype) || this.isSubtype(Referentials, supertype);
+            }
             case Text: {
                 return this.isSubtype(Command, supertype) || this.isSubtype(Media, supertype) || this.isSubtype(Referentials, supertype);
             }
@@ -295,13 +306,15 @@ export class DaliMovieAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'AddMedia:mediaRef':
-            case 'Cut:mediaRef': {
+            case 'AddMedia:mediaRef': {
                 return Media;
             }
             case 'AddMedia:referential':
             case 'AddText:referential': {
                 return Referentials;
+            }
+            case 'Cut:mediaRef': {
+                return Cutable;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);

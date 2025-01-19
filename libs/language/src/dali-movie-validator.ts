@@ -22,7 +22,8 @@ export function registerValidationChecks(services: DaliMovieServices) {
       validator.validatorScriptPreventEmptyFilename,
       validator.validateAllTimeFormat,
       validator.validateIllegalIdReferences,
-      validator.validateQuotedFilename
+      validator.validateQuotedFilename,
+      validator.preventMultipleUseOfSameMedia
     ],
   };
   registry.register(checks, validator);
@@ -75,6 +76,36 @@ export class DaliMovieValidator {
               {
                 node: command,
                 property: "name",
+              }
+            );
+          }
+          break;
+        case "AddMedia":
+          let addMedia = command as AddMedia;
+          let mediaRef = addMedia.mediaRef?.ref?.name;
+          let referential = addMedia.referential?.ref?.name;
+          if (mediaRef && mediaRef === referential) {
+            accept(
+              "error",
+              "can't add a media relatively to itself.",
+              {
+                node: command,
+                property: "referential",
+              }
+            );
+          }
+          break;
+        case "AddText":
+          let addText = command as AddText;
+          let name = addText.name;
+          referential = addText.referential?.ref?.name;
+          if (name && name === referential) {
+            accept(
+              "error",
+              "can't add a text relatively to itself.",
+              {
+                node: command,
+                property: "referential",
               }
             );
           }
@@ -194,7 +225,6 @@ export class DaliMovieValidator {
           }
           break;
         case "AddText":
-          break;
         case "Text":
           let duration = (command as any).duration;
           if (duration && duration !== "") {
@@ -314,5 +344,30 @@ export class DaliMovieValidator {
         );
       }
     }
+  }
+
+  preventMultipleUseOfSameMedia(script: Script, accept: ValidationAcceptor) {
+    const seenNames = new Map<string, Command>();
+
+    script.commands.forEach((command) => {
+      if (command.$type === "AddMedia") {
+        let name = (command as AddMedia).mediaRef.ref?.name;
+        if (name) {
+          if (seenNames.has(name)) {
+            accept(
+              "error",
+              `The media '${name}' is already used in the timeline, multiple usage of same media is forbidden.`,
+              {
+                node: command,
+                property: "mediaRef",
+              }
+            );
+          }
+          else {
+            seenNames.set(name, command);
+          }
+        }
+      }
+    });
   }
 }

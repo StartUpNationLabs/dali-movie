@@ -8,11 +8,13 @@ import {
   AddText,
   Command,
   Cut,
+  Cutable,
   LoadAudio,
   LoadVideo,
   Script,
   Text,
 } from '@dali-movie/language';
+import { Reference } from 'langium';
 
 export function generateMoviePython(
   model: Script,
@@ -104,7 +106,7 @@ function addMedia(command: AddMedia): string {
       $type: 'Cut',
       duration: command.duration,
       from: command.from,
-      mediaRef: command.mediaRef,
+      mediaRef: command.mediaRef as Reference<Cutable>,
       name: variableName,
     });
   }
