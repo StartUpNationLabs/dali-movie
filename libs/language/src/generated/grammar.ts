@@ -131,7 +131,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             }
@@ -139,7 +139,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@15"
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -173,7 +173,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             }
@@ -181,7 +181,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@15"
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -216,7 +216,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@21"
+                  "$ref": "#/rules@22"
                 },
                 "arguments": []
               },
@@ -267,7 +267,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@19"
+                        "$ref": "#/rules@20"
                       },
                       "arguments": []
                     }
@@ -287,7 +287,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@20"
               },
               "arguments": []
             }
@@ -303,7 +303,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             }
@@ -330,7 +330,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@16"
+              "$ref": "#/rules@17"
             },
             "arguments": []
           },
@@ -345,7 +345,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@20"
               },
               "arguments": []
             }
@@ -364,7 +364,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -386,7 +386,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@14"
+                    "$ref": "#/rules@15"
                   },
                   "arguments": []
                 }
@@ -402,7 +402,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@14"
+                    "$ref": "#/rules@15"
                   },
                   "arguments": []
                 }
@@ -424,7 +424,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -443,7 +443,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@21"
+                "$ref": "#/rules@22"
               },
               "arguments": []
             }
@@ -474,12 +474,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/rules@11"
+                "$ref": "#/rules@12"
               },
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@21"
+                  "$ref": "#/rules@22"
                 },
                 "arguments": []
               },
@@ -533,7 +533,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                         "terminal": {
                           "$type": "RuleCall",
                           "rule": {
-                            "$ref": "#/rules@19"
+                            "$ref": "#/rules@20"
                           },
                           "arguments": []
                         }
@@ -553,7 +553,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@19"
+                    "$ref": "#/rules@20"
                   },
                   "arguments": []
                 }
@@ -586,12 +586,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@13"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@21"
+                          "$ref": "#/rules@22"
                         },
                         "arguments": []
                       },
@@ -622,12 +622,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@13"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@21"
+                          "$ref": "#/rules@22"
                         },
                         "arguments": []
                       },
@@ -661,7 +661,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@16"
+              "$ref": "#/rules@17"
             },
             "arguments": []
           },
@@ -676,7 +676,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@19"
+                "$ref": "#/rules@20"
               },
               "arguments": []
             }
@@ -695,7 +695,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -717,7 +717,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@14"
+                    "$ref": "#/rules@15"
                   },
                   "arguments": []
                 }
@@ -733,7 +733,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@14"
+                    "$ref": "#/rules@15"
                   },
                   "arguments": []
                 }
@@ -755,7 +755,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@13"
+                    "$ref": "#/rules@14"
                   },
                   "arguments": []
                 }
@@ -788,12 +788,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@13"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@21"
+                          "$ref": "#/rules@22"
                         },
                         "arguments": []
                       },
@@ -824,12 +824,12 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@13"
                       },
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$ref": "#/rules@21"
+                          "$ref": "#/rules@22"
                         },
                         "arguments": []
                       },
@@ -855,7 +855,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@21"
+                    "$ref": "#/rules@22"
                   },
                   "arguments": []
                 }
@@ -889,7 +889,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@15"
+              "$ref": "#/rules@16"
             },
             "arguments": []
           }
@@ -925,7 +925,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@19"
+                        "$ref": "#/rules@20"
                       },
                       "arguments": []
                     },
@@ -985,7 +985,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@19"
+                        "$ref": "#/rules@20"
                       },
                       "arguments": []
                     },
@@ -1012,6 +1012,42 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
                 }
               }
             ]
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Cutable",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@2"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@3"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@4"
+            },
+            "arguments": []
           }
         ]
       },
@@ -1125,7 +1161,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@24"
+              "$ref": "#/rules@25"
             },
             "arguments": []
           },
@@ -1228,7 +1264,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@20"
+              "$ref": "#/rules@21"
             },
             "arguments": []
           },
@@ -1256,7 +1292,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@22"
+            "$ref": "#/rules@23"
           },
           "arguments": []
         }
@@ -1278,7 +1314,7 @@ export const DaliMovieGrammar = (): Grammar => loadedDaliMovieGrammar ?? (loaded
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@26"
+            "$ref": "#/rules@27"
           },
           "arguments": []
         }

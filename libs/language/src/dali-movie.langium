@@ -15,7 +15,7 @@ LoadAudio:
 ;
 
 Cut:
-    'cut' mediaRef=[Media:ID] 
+    'cut' mediaRef=[Cutable:ID] 
     'from' (from=('start' | 'end') 'for'| from=TIME 'to') 
     duration=TIME 'named' name=ID
 ;
@@ -56,6 +56,10 @@ StartingRule:
 
 EndingRule:
     'ending' ((offset=TIME)? anchor='before' | anchor='at');
+
+Cutable:
+    LoadVideo | LoadAudio | Cut
+;
 
 Media:
     LoadVideo | LoadAudio | Cut | Text

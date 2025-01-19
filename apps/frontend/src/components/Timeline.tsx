@@ -44,7 +44,6 @@ export const Timeline = (
         if (errorMessage.includes("NO_SPACE_TO_PLACE")) {
           toast.error('You can\'t supperpose clip ' + name + ' with another one.', {
               type: 'error',
-              position: 'top-center',
               autoClose: false,
               toastId: 'no-space-toast'
             }
@@ -53,31 +52,20 @@ export const Timeline = (
           toast.error('The cut on ' + name + ' doesn\'t fit the media duration',
             {
               type: 'error',
-              position: 'top-center',
               autoClose: false,
               toastId: 'cut-to-long-toast'
             });
         } else if (errorMessage.includes("WRONG_REFERENCE")) {
-          toast.error('Wrong reference to ' + name, {
+          toast.error(name + ' is not on the timeline', {
             type: 'error',
-            position: 'top-center',
             autoClose: false,
             toastId: 'wrong-reference-toast'
           });
         } else if (errorMessage.includes("VIDEO_FILEPATH") || errorMessage.includes("AUDIO_FILEPATH")) {
           toast.error('Wrong file path ' + name, {
             type: 'error',
-            position: 'top-center',
             autoClose: false,
             toastId: 'wrong-filepath-toast'
-          });
-        } else {
-          console.log(errorMessage)
-          toast.error('Your dali code can\'t compute', {
-            type: 'error',
-            position: 'top-center',
-            autoClose: false,
-            toastId: 'dali-code-toast'
           });
         }
       },
