@@ -196,7 +196,7 @@ class Dali_movie():
         return self.cut(name, video, duration-end_trim, duration)
 
     #TEXT
-    def text(self, name, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
+    def text(self, name, text, duration=5, backgroundColor=None, textColor = "white", position=(0, 0)):
         if self.export_mode != "timeline" : print(backgroundColor)
         return Dali_clip(name, TextWrapper(font_path=self._font_path, name=name, text=text, duration=duration, backgroundColor=backgroundColor, textColor=textColor, position=position), 0)
 

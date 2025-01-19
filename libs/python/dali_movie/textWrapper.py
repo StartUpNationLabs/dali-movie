@@ -2,7 +2,7 @@ from moviepy import TextClip, ColorClip, CompositeVideoClip
 from matplotlib.colors import to_rgb
 
 class TextWrapper():
-    def __init__(self, font_path, name, text, duration=5, backgroundColor=None, textColor = "black", position=(0, 0)):
+    def __init__(self, font_path, name, text, duration=5, backgroundColor=None, textColor = "white", position=(0, 0)):
         self.font_path=font_path
         self.name = name
         self.text = text.strip('"')
